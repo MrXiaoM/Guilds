@@ -28,9 +28,12 @@ import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.utils.EconomyUtils
 import org.bukkit.entity.Player
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.*
 
 class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpansion() {
-
+    val date = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
     override fun getIdentifier(): String {
         return "guilds"
     }
@@ -161,6 +164,7 @@ class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpans
         }
 
         val guild = api.getGuild(player) ?: return ""
+        val member = guild.getMember(player.uniqueId)
         return when (arg.toLowerCase()) {
             "id" -> guild.id.toString()
             "name" -> guild.name
@@ -174,12 +178,15 @@ class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpans
             "tier_name" -> guild.tier.name
             "balance" -> EconomyUtils.format(guild.balance)
             "balance_raw" -> guild.balance.toString()
+            "frd" -> guild.prosperity.toString()
+            "prosperity" -> guild.prosperity.toString()
             "code_amount" -> guild.codes.size.toString()
             "max_members" -> guild.tier.maxMembers.toString()
             "max_balance" -> EconomyUtils.format(guild.tier.maxBankBalance)
             "challenge_wins" -> guild.guildScore.wins.toString()
             "challenge_loses" -> guild.guildScore.loses.toString()
             "motd" -> guild.motd ?: ""
+            "join_time" -> date.format(Date(member.joinDate))
             else -> ""
         }
     }

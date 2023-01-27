@@ -50,6 +50,30 @@ internal class CommandAdminBank : BaseCommand() {
     @Dependency lateinit var guildHandler: GuildHandler
     @Dependency lateinit var settingsManager: SettingsManager
 
+    @Subcommand("admin frd")
+    @Description("")
+    @CommandPermission(Constants.ADMIN_PERM)
+    @Syntax("%guild %action %value")
+    @CommandCompletion("@guilds")
+    fun frd(issuer: CommandIssuer, @Flags("other") @Values("@guilds") guild: Guild, action: String, value: Int) {
+        val type = when (action.lowercase()) {
+            "set" -> {
+                guild.prosperity = value
+                "已设置为"
+            }
+            "add" -> {
+                guild.prosperity += value
+                "增加了"
+            }
+            "remove" -> {
+                guild.prosperity -= value
+                "减少了"
+            }
+            else -> return
+        }
+        issuer.sendMessage("公会 ${guild.name}的繁荣度$type $value")
+    }
+
     @Subcommand("admin bank balance")
     @Description("{@@descriptions.admin-bank-balance}")
     @CommandPermission(Constants.ADMIN_PERM)

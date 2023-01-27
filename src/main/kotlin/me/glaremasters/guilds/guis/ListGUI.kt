@@ -147,6 +147,8 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
                     .replace("{guild-status}", status)
                     .replace("{guild-tier}", tier)
                     .replace("{guild-balance}", EconomyUtils.format(guild.balance))
+                    .replace("{guild-prosperity}", guild.prosperity.toString())
+                    .replace("{guild-frd}", guild.prosperity.toString())
                     .replace("{guild-member-count}", guild.size.toString())
                     .replace("{guild-challenge-wins}", guild.guildScore.wins.toString())
                     .replace("{guild-challenge-loses}", guild.guildScore.loses.toString())

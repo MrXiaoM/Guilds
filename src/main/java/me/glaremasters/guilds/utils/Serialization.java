@@ -75,7 +75,6 @@ public class Serialization {
      * @param jsons the JSON string
      * @param title the name of the inventory
      * @return the deserialized string
-     * @throws InvalidConfigurationException
      */
     public static Inventory deserializeInventory(String jsons, String title, SettingsManager settingsManager) throws InvalidConfigurationException {
         try {

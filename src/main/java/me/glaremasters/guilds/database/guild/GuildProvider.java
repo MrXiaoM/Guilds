@@ -39,7 +39,6 @@ public interface GuildProvider {
     /**
      * Creates the container that will hold guilds
      * @param tablePrefix the prefix, if any, to use
-     * @throws IOException
      */
     void createContainer(@Nullable String tablePrefix) throws IOException;
 
@@ -47,7 +46,6 @@ public interface GuildProvider {
      * Checks whether or not a guild with the specified id exists
      * @param id the guild id
      * @return true or false
-     * @throws IOException
      */
     boolean guildExists(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 
@@ -70,7 +68,6 @@ public interface GuildProvider {
      * @param tablePrefix the prefix, if any, to use
      * @param id the id of the guild to load
      * @return the found guild or null
-     * @throws IOException
      */
     Guild getGuild(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 
@@ -87,7 +84,6 @@ public interface GuildProvider {
      * @param tablePrefix the prefix, if any, to use
      * @param id the id of the guild to update
      * @param data the updated data of the guild
-     * @throws IOException
      */
     void updateGuild(@Nullable String tablePrefix, @NotNull String id, @NotNull String data) throws IOException;
 
@@ -95,7 +91,6 @@ public interface GuildProvider {
      * Deletes a guild from the database
      * @param tablePrefix the prefix, if any, to use
      * @param id the guild id to delete
-     * @throws IOException
      */
     void deleteGuild(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 }

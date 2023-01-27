@@ -69,8 +69,6 @@ public class EntityListener implements Listener {
 
     /**
      * Handles the extra damage to a mob
-     *
-     * @param event
      */
     @EventHandler
     public void onMobDamage(EntityDamageByEntityEvent event) {
@@ -91,8 +89,6 @@ public class EntityListener implements Listener {
 
     /**
      * Handles extra XP dropped from mobs
-     *
-     * @param event
      */
     @EventHandler
     public void onMobDeath(EntityDeathEvent event) {
@@ -178,8 +174,6 @@ public class EntityListener implements Listener {
 
     /**
      * Handles flame arrows
-     *
-     * @param event
      */
     @EventHandler
     public void onFlameArrow(EntityCombustByEntityEvent event) {
@@ -215,8 +209,6 @@ public class EntityListener implements Listener {
 
     /**
      * Handles splash potions+
-     *
-     * @param event
      */
     @EventHandler
     public void onSplash(PotionSplashEvent event) {

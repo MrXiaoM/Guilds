@@ -37,13 +37,12 @@ public interface CooldownProvider {
     /**
      * Creates the container that will hold cooldowns
      * @param tablePrefix the prefix, if any, to use
-     * @throws IOException
      */
     void createContainer(@Nullable String tablePrefix) throws IOException;
 
     /**
      * Checks if a cooldown exists in the database
-     * @oaram tablePrefix the prefix, if any, to use
+     * @param tablePrefix the prefix, if any, to use
      * @param cooldownType the cooldown type
      * @param cooldownOwner the owner UUID of the cooldown
      * @return true or false
@@ -63,7 +62,6 @@ public interface CooldownProvider {
      * @param cooldownType the cooldown type
      * @param cooldownOwner the owner UUID of the cooldown
      * @param cooldownExpiry when the cooldown expires in milliseconds
-     * @throws IOException
      */
     default void createCooldown(@Nullable String tablePrefix, @NotNull String cooldownType, @NotNull String cooldownOwner, @NotNull Timestamp cooldownExpiry) throws IOException {
         createCooldown(tablePrefix, UUID.randomUUID().toString(), cooldownType, cooldownOwner, cooldownExpiry);
@@ -76,7 +74,6 @@ public interface CooldownProvider {
      * @param cooldownType the cooldown type
      * @param cooldownOwner the owner UUID of the cooldown
      * @param cooldownExpiry when the cooldown expires in milliseconds
-     * @throws IOException
      */
     void createCooldown(@Nullable String tablePrefix, @NotNull String id, @NotNull String cooldownType, @NotNull String cooldownOwner, @NotNull Timestamp cooldownExpiry) throws IOException;
 
@@ -85,7 +82,6 @@ public interface CooldownProvider {
      * @param tablePrefix the table prefix
      * @param cooldownType the type of cooldown
      * @param cooldownOwner the owner UUID of the cooldown
-     * @throws IOException
      */
     void deleteCooldown(@Nullable String tablePrefix, @NotNull String cooldownType, @NotNull String cooldownOwner) throws IOException;
 }

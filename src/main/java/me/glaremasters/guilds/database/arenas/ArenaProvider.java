@@ -39,7 +39,6 @@ public interface ArenaProvider {
     /**
      * Creates the container that will hold arena
      * @param tablePrefix the prefix, if any, to use
-     * @throws IOException
      */
     void createContainer(@Nullable String tablePrefix) throws IOException;
 
@@ -47,7 +46,6 @@ public interface ArenaProvider {
      * Checks whether or not an arena with the specified id exists
      * @param id the arena id
      * @return true or false
-     * @throws IOException
      */
     boolean arenaExists(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 
@@ -70,7 +68,6 @@ public interface ArenaProvider {
      * @param tablePrefix the prefix, if any, to use
      * @param id the id of the arena to load
      * @return the found arena or null
-     * @throws IOException
      */
     Arena getArena(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 
@@ -87,7 +84,6 @@ public interface ArenaProvider {
      * @param tablePrefix the prefix, if any, to use
      * @param id the id of the arena to update
      * @param data the updated data of the arena
-     * @throws IOException
      */
     void updateArena(@Nullable String tablePrefix, @NotNull String id, @NotNull String data) throws IOException;
 
@@ -95,7 +91,6 @@ public interface ArenaProvider {
      * Deletes a arena from the database
      * @param tablePrefix the prefix, if any, to use
      * @param id the arena id to delete
-     * @throws IOException
      */
     void deleteArena(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 }

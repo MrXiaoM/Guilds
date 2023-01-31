@@ -187,7 +187,14 @@ class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpans
             "challenge_loses" -> guild.guildScore.loses.toString()
             "motd" -> guild.motd ?: ""
             "join_time" -> date.format(Date(member.joinDate))
-            else -> ""
+            "vault_count" -> guild.vaults.size.toString()
+            else -> {
+                if (arg.startsWith("vault_locked_")) {
+                    val num = arg.removePrefix("vault_locked_").toIntOrNull()
+
+                }
+                ""
+            }
         }
     }
 }

@@ -87,11 +87,27 @@ internal class CommandGUI : BaseCommand() {
         guilds.guiHandler.members.get(guild, player).open(player)
     }
 
-    @Subcommand("vault")
+    @Subcommand("vaults")
     @Description("{@@descriptions.vault}")
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "vault")
     fun vault(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild) {
         guilds.guiHandler.vaults.get(guild, player).open(player)
+    }
+
+    @Subcommand("vault")
+    @Description("{@@descriptions.vault}")
+    @Syntax("%amount")
+    @CommandPermission(Constants.BASE_PERM + "vault")
+    fun vaultSel(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild, amount: Int) {
+        guilds.guiHandler.vaults.get(guild, player).open(player)
+        if (amount < 1 || amount > guild.vaults.size) return
+        try {
+            guildHandler.getGuildVault(guild, amount)
+        } catch (ex: IndexOutOfBoundsException) {
+            guildHandler.vaults[guild]?.add(guildHandler.createNewVault(settingsManager))
+        }
+        player.openInventory(guildHandler.getGuildVault(guild, amount))
+        guildHandler.opened.add(player)
     }
 }

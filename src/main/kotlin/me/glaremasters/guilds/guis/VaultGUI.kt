@@ -45,7 +45,7 @@ class VaultGUI(private val guilds: Guilds, private val settingsManager: Settings
         // Prevent players from being able to items into the GUIs
         gui.setOutsideClickAction { event ->
             event.isCancelled = true
-            guilds.guiHandler.info.get(guild, player).open(event.whoClicked)
+            //guilds.guiHandler.info.get(guild, player).open(event.whoClicked)
         }
 
         addItems(gui, guild, player)

@@ -51,9 +51,9 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
 
         gui.setOutsideClickAction { event ->
             event.isCancelled = true
-            val player = event.whoClicked as Player
-            val playerGuild = guildHandler.getGuild(player)
-            if (playerGuild == null) guilds.guiHandler.list.get(player).open(event.whoClicked) else guilds.guiHandler.info.get(playerGuild, player).open(event.whoClicked)
+            val p = event.whoClicked as Player
+            val playerGuild = guildHandler.getGuild(p)
+            if (playerGuild == null) guilds.guiHandler.list.get(p).open(event.whoClicked)// else guilds.guiHandler.info.get(playerGuild, p).open(event.whoClicked)
         }
 
         addItems(gui, guild, player)

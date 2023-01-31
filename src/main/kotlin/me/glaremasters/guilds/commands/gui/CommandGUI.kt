@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.gui
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandPermission
@@ -35,13 +36,15 @@ import dev.triumphteam.gui.guis.PaginatedGui
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.exceptions.InvalidTierException
 import me.glaremasters.guilds.guild.Guild
+import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.utils.Constants
 import org.bukkit.entity.Player
 
 @CommandAlias("%guilds")
 internal class CommandGUI : BaseCommand() {
-    @Dependency
-    lateinit var guilds: Guilds
+    @Dependency lateinit var guilds: Guilds
+    @Dependency lateinit var guildHandler: GuildHandler
+    @Dependency lateinit var settingsManager: SettingsManager
 
     @Subcommand("buff")
     @Description("{@@descriptions.buff}")
@@ -54,7 +57,7 @@ internal class CommandGUI : BaseCommand() {
 
         guilds.guiHandler.buffs.get(player, guild, guilds.commandManager).open(player)
     }
-
+/*
     @Subcommand("info")
     @Description("{@@descriptions.info}")
     @Syntax("")
@@ -62,7 +65,7 @@ internal class CommandGUI : BaseCommand() {
     fun info(player: Player, guild: Guild) {
         guilds.guiHandler.info.get(guild, player).open(player)
     }
-
+*/
     @Subcommand("list")
     @Description("{@@descriptions.list}")
     @Syntax("")

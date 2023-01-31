@@ -90,6 +90,7 @@ descriptions:
   war-deny: "拒绝一个战争请求"
   war-join: "加入一个等待中的战争"
 syntax:
+  action: <操作>
   msg: '[消息]'
   name: <名称>
   player: <玩家>

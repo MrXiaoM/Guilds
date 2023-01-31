@@ -113,6 +113,10 @@ public class GuildListSettings implements SettingsHolder {
     public static final Property<List<String>> GUILD_LIST_HEAD_LORE =
             newListProperty(LIST_PATH + "head-lore", "&cName&8: &a{guild-name}", "&cPrefix&8: &a{guild-prefix}", "&cMaster&8: &a{guild-master}", "&cStatus&8: &a{guild-status}", "&cTier&8: &a{guild-tier}", "&cBalance&8: &a{guild-balance}", "&cMember Count&8: &a{guild-member-count}", "&cCreation Date&8: &a{creation}");
 
+    @Comment({""})
+    public static final Property<List<String>> GUILD_LIST_HEAD_LORE_NO_GUILD =
+            newListProperty(LIST_PATH + "head-lore-no-guild", "&cName&8: &a{guild-name}", "&cPrefix&8: &a{guild-prefix}", "&cMaster&8: &a{guild-master}", "&cStatus&8: &a{guild-status}", "&cTier&8: &a{guild-tier}", "&cBalance&8: &a{guild-balance}", "&cMember Count&8: &a{guild-member-count}", "&cCreation Date&8: &a{creation}", "&aClick to request to join the guild");
+
 
     private GuildListSettings() {
     }

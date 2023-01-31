@@ -124,7 +124,13 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         name = name.replace("{guild}", guild.name)
 
         meta?.setDisplayName(name)
-        meta?.lore = updatedLore(guild, settingsManager.getProperty(GuildListSettings.GUILD_LIST_HEAD_LORE))
+        meta?.lore = updatedLore(guild,
+            settingsManager.getProperty(
+                if (guilds.guildHandler.getGuild(player) == null)
+                    GuildListSettings.GUILD_LIST_HEAD_LORE_NO_GUILD
+                else GuildListSettings.GUILD_LIST_HEAD_LORE
+            )
+        )
 
         item.itemMeta = meta
 
@@ -132,7 +138,11 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
 
         guiItem.setAction { event ->
             event.isCancelled = true
-            guilds.guiHandler.members.get(guild, player).open(event.whoClicked)
+            if (guilds.guildHandler.getGuild(player) == null) {
+                player.closeInventory()
+                Bukkit.dispatchCommand(player, "guild request ${guild.name}")
+            }
+            else guilds.guiHandler.members.get(guild, player).open(event.whoClicked)
         }
 
         items.add(guiItem)

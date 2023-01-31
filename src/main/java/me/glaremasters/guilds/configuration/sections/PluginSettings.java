@@ -54,7 +54,7 @@ public final class PluginSettings implements SettingsHolder {
             "If I wanted to switch to french, I would use fr-FR as the language instead."
     })
     public static final Property<String> MESSAGES_LANGUAGE =
-            newProperty("settings.messagesLanguage", "en-US");
+            newProperty("settings.messagesLanguage", "zh-CN");
 
     @Comment("Would you like to check for plugin updates on startup? It's highly suggested you keep this enabled!")
     public static final Property<Boolean> UPDATE_CHECK =

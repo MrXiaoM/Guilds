@@ -31,7 +31,7 @@ class ArenaHandler(private val guilds: Guilds) {
     private val arenas = mutableMapOf<String, Arena>()
 
     fun addArena(arena: Arena) {
-        arenas[arena.name.toLowerCase()] = arena
+        arenas[arena.name.lowercase()] = arena
     }
 
     fun removeArena(arena: Arena) {
@@ -43,7 +43,7 @@ class ArenaHandler(private val guilds: Guilds) {
     }
 
     fun getArena(name: String): Optional<Arena> {
-        return Optional.ofNullable(arenas[name.toLowerCase()])
+        return Optional.ofNullable(arenas[name.lowercase()])
     }
 
     fun getAvailableArena(): Optional<Arena> {

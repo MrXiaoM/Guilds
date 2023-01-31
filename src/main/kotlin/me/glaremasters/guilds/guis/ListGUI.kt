@@ -26,6 +26,7 @@ package me.glaremasters.guilds.guis
 import ch.jalu.configme.SettingsManager
 import dev.triumphteam.gui.guis.GuiItem
 import dev.triumphteam.gui.guis.PaginatedGui
+import me.clip.placeholderapi.PlaceholderAPI
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.configuration.sections.GuildInfoSettings
 import me.glaremasters.guilds.configuration.sections.GuildListSettings
@@ -36,6 +37,7 @@ import me.glaremasters.guilds.guild.GuildSkull
 import me.glaremasters.guilds.utils.EconomyUtils
 import me.glaremasters.guilds.utils.GuiUtils
 import me.glaremasters.guilds.utils.StringUtils
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.text.SimpleDateFormat
 
@@ -52,24 +54,37 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
 
             createListItems(gui, player)
             addBottom(gui)
-            createButtons(gui)
+            createButtons(player, gui)
 
             return gui
         }
 
-    private fun createButtons(gui: PaginatedGui) {
+    private fun createButtons(player: Player, gui: PaginatedGui) {
         val next = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_NEXT_PAGE_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_NEXT_PAGE_ITEM_NAME), emptyList()))
         next.setAction {
             gui.next()
         }
 
-        val back = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM_NAME), emptyList()))
-        back.setAction {
+        val prev = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM_NAME), emptyList()))
+        prev.setAction {
             gui.previous()
         }
 
+        val back = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM_NAME), emptyList()))
+        back.setAction {
+            val commands = settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM_COMMANDS);
+            PlaceholderAPI.setPlaceholders(player, commands).map { StringUtils.color(it) }.forEach {
+                when {
+                    it.startsWith("console:") -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), it.removePrefix("console:"))
+                    it.startsWith("message:") -> player.sendMessage(it.removePrefix("message:"))
+                    it.startsWith("player:") -> Bukkit.dispatchCommand(player, it.removePrefix("player:"))
+                }
+            }
+        }
+
         gui.setItem(6, 9, next)
-        gui.setItem(6, 1, back)
+        gui.setItem(6, 1, prev)
+        gui.setItem(6, 5, back)
     }
 
     private fun createListItems(gui: PaginatedGui, player: Player) {

@@ -27,6 +27,7 @@ import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -74,6 +75,18 @@ public class GuildListSettings implements SettingsHolder {
     @Comment("What should the name of this item be?")
     public static final Property<String> GUILD_LIST_NEXT_PAGE_ITEM_NAME =
             newProperty(LIST_PATH + "next-page-item-name", "&fNext Page");
+
+    @Comment("What item should players click to go back?")
+    public static final Property<String> GUILD_LIST_BACK_ITEM =
+            newProperty(LIST_PATH + "back-item", "RED_STAINED_GLASS_PANE");
+
+    @Comment("What should the name of this item be?")
+    public static final Property<String> GUILD_LIST_BACK_ITEM_NAME =
+            newProperty(LIST_PATH + "back-item-name", "&fBack");
+
+    @Comment("What commands should execute if player click the back button?")
+    public static final Property<List<String>> GUILD_LIST_BACK_ITEM_COMMANDS =
+            newListProperty(LIST_PATH + "back-item-commands", "console:dm open cd_guild %player_name%");
 
     @Comment("What item should players click to go to the previous page?")
     public static final Property<String> GUILD_LIST_PREVIOUS_PAGE_ITEM =

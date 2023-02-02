@@ -212,10 +212,11 @@ invite:
   already-in-guild: "&c{player} 已经在另一个公会之中!"
 upgrade:
   tier-max: "&7[&6公会&7]&f公会已达最高等级"
-  money-warning: "&7[&6公会&7]&f你将会消耗 {amount} 金币以升级你的公会[输入/guilds confirm 继续]"
+  money-warning: "&7[&6公会&7]&f公会将会消耗 {amount} 公会资金以升级你的公会[输入/guilds confirm 继续]"
   cancel: "&7[&6公会&7]&f已取消"
   success: "&7[&6公会&7]&f你已成功升级你的公会"
-  not-enough-money: "&7[&6公会&7]&f你没有足够的金币来升级公会，你还需要 {needed} 金币!"
+  not-enough-prosperity: "&7[&6公会&7]&f公会没有足够的繁荣度来升级，你还需要 {needed} 繁荣度!"
+  not-enough-money: "&7[&6公会&7]&f公会没有足够的公会资金来升级，你还需要 {needed} 公会资金!"
   not-enough-members: "&7[&6公会&7]&f你需要至少 {amount} 位公会成员来升级公会"
 prefix:
   successful: "&7[&6公会&7]&f已成功更改工会前缀成 {prefix}!"

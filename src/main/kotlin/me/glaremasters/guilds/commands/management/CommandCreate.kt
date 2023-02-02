@@ -136,6 +136,7 @@ internal class CommandCreate : BaseCommand() {
                 gb.members(members)
                 gb.home(null)
                 gb.balance(0.0)
+                gb.prosperity(0)
                 gb.tier(guildHandler.getGuildTier(1))
 
                 gb.invitedMembers(arrayListOf())

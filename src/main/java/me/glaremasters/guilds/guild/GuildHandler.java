@@ -166,6 +166,7 @@ public class GuildHandler {
                     .level(tierSec.getInt(key + ".level"))
                     .name(tierSec.getString(key + ".name"))
                     .cost(tierSec.getDouble(key + ".cost", 1000))
+                    .prosperity(tierSec.getInt(key + ".prosperity", 0))
                     .maxMembers(tierSec.getInt(key + ".max-members", 10))
                     .vaultAmount(tierSec.getInt(key + ".vault-amount", 1))
                     .mobXpMultiplier(tierSec.getDouble(key + ".mob-xp-multiplier", 1.0))

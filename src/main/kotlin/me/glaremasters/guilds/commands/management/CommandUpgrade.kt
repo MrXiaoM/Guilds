@@ -72,9 +72,14 @@ internal class CommandUpgrade : BaseCommand() {
 
         val tier = guildHandler.getGuildTier(guild.tier.level + 1)!!
         val cost = tier.cost
+        val prosperity = tier.prosperity
 
         if (guildHandler.memberCheck(guild)) {
             throw ExpectationNotMet(Messages.UPGRADE__NOT_ENOUGH_MEMBERS, "{amount}", guild.tier.membersToRankup.toString())
+        }
+
+        if (guild.prosperity < prosperity) {
+            throw ExpectationNotMet(Messages.UPGRADE__NOT_ENOUGH_PROSPERITY, "{needed}", (prosperity - guild.prosperity).toString())
         }
 
         if (!EconomyUtils.hasEnough(guild.balance, cost)) {

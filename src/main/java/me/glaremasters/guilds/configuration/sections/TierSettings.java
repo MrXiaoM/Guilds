@@ -54,6 +54,10 @@ public class TierSettings implements SettingsHolder {
     public static final Property<Double> ONE_COST =
             newProperty(LIST_PATH + "1.cost", 0.0);
 
+    @Comment("How much is this tier? (If first tier, keep as same price as cost creation)")
+    public static final Property<Integer> ONE_PROSPERITY =
+            newProperty(LIST_PATH + "1.prosperity", 0);
+
     @Comment("How many members can be in a guild of this tier?")
     public static final Property<Integer> ONE_MAX_MEMBERS =
             newProperty(LIST_PATH + "1.max-members", 15);

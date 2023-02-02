@@ -30,6 +30,7 @@ public class GuildTier {
     private final int level;
     private final transient String name;
     private final transient double cost;
+    private final transient int prosperity;
     private final transient int maxMembers;
     private final transient int vaultAmount;
     private final transient double mobXpMultiplier;
@@ -40,10 +41,11 @@ public class GuildTier {
     private final transient boolean useBuffs;
     private final transient List<String> permissions;
 
-    public GuildTier(int level, String name, double cost, int maxMembers, int vaultAmount, double mobXpMultiplier, double damageMultiplier, double maxBankBalance, int membersToRankup, int maxAllies, boolean useBuffs, List<String> permissions) {
+    public GuildTier(int level, String name, double cost, int prosperity, int maxMembers, int vaultAmount, double mobXpMultiplier, double damageMultiplier, double maxBankBalance, int membersToRankup, int maxAllies, boolean useBuffs, List<String> permissions) {
         this.level = level;
         this.name = name;
         this.cost = cost;
+        this.prosperity = prosperity;
         this.maxMembers = maxMembers;
         this.vaultAmount = vaultAmount;
         this.mobXpMultiplier = mobXpMultiplier;
@@ -70,6 +72,11 @@ public class GuildTier {
     public double getCost() {
         return this.cost;
     }
+
+    public int getProsperity() {
+        return this.prosperity;
+    }
+
 
     public int getMaxMembers() {
         return this.maxMembers;
@@ -115,6 +122,7 @@ public class GuildTier {
         private int level;
         private String name;
         private double cost;
+        private int prosperity;
         private int maxMembers;
         private int vaultAmount;
         private double mobXpMultiplier;
@@ -140,6 +148,10 @@ public class GuildTier {
 
         public GuildTier.GuildTierBuilder cost(double cost) {
             this.cost = cost;
+            return this;
+        }
+        public GuildTier.GuildTierBuilder prosperity(int prosperity) {
+            this.prosperity = prosperity;
             return this;
         }
 
@@ -189,11 +201,11 @@ public class GuildTier {
         }
 
         public GuildTier build() {
-            return new GuildTier(level, name, cost, maxMembers, vaultAmount, mobXpMultiplier, damageMultiplier, maxBankBalance, membersToRankup, maxAllies, useBuffs, permissions);
+            return new GuildTier(level, name, cost, prosperity, maxMembers, vaultAmount, mobXpMultiplier, damageMultiplier, maxBankBalance, membersToRankup, maxAllies, useBuffs, permissions);
         }
 
         public String toString() {
-            return "GuildTier.GuildTierBuilder(level=" + this.level + ", name=" + this.name + ", cost=" + this.cost + ", maxMembers=" + this.maxMembers + ", vaultAmount=" + this.vaultAmount + ", mobXpMultiplier=" + this.mobXpMultiplier + ", damageMultiplier=" + this.damageMultiplier + ", maxBankBalance=" + this.maxBankBalance + ", membersToRankup=" + this.membersToRankup + ", useBuffs=" + this.useBuffs + ", permissions=" + this.permissions + ")";
+            return "GuildTier.GuildTierBuilder(level=" + this.level + ", name=" + this.name + ", cost=" + this.cost + ", prosperity=" + this.prosperity + ", maxMembers=" + this.maxMembers + ", vaultAmount=" + this.vaultAmount + ", mobXpMultiplier=" + this.mobXpMultiplier + ", damageMultiplier=" + this.damageMultiplier + ", maxBankBalance=" + this.maxBankBalance + ", membersToRankup=" + this.membersToRankup + ", useBuffs=" + this.useBuffs + ", permissions=" + this.permissions + ")";
         }
     }
 }

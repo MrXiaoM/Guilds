@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "me.glaremasters"
-version = "3.5.6.8-SNAPSHOT"
+version = "3.5.6.9-SNAPSHOT"
 
 base {
     archivesBaseName = "Guilds"
@@ -29,6 +29,7 @@ apply {
 
 repositories {
     mavenCentral()
+    maven("https://crystal.app.lss233.com/repositories/minecraft/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
         content { includeGroup("org.bukkit") }
     }

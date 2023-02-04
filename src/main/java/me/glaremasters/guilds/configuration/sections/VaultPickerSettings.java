@@ -69,6 +69,11 @@ public class VaultPickerSettings implements SettingsHolder {
     public static final Property<String> PICKER_LOCKED =
             newProperty("guis.vault-picker.locked", "&c&mLocked&r");
 
+    @Comment({"What do you want to do if player click outside the vault?",
+    "Back to vault picker if the list is empty"})
+    public static final Property<List<String>> BACK_ACTIONS =
+            newListProperty("guis.vault-picker.back-actions");
+
 
 
     private VaultPickerSettings() {

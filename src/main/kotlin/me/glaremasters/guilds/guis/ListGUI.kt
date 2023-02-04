@@ -73,13 +73,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         val back = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM_NAME), emptyList()))
         back.setAction {
             val commands = settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM_COMMANDS);
-            PlaceholderAPI.setPlaceholders(player, commands).map { StringUtils.color(it) }.forEach {
-                when {
-                    it.startsWith("console:") -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), it.removePrefix("console:"))
-                    it.startsWith("message:") -> player.sendMessage(it.removePrefix("message:"))
-                    it.startsWith("player:") -> Bukkit.dispatchCommand(player, it.removePrefix("player:"))
-                }
-            }
+            executeAction(player, commands)
         }
 
         gui.setItem(6, 9, next)
@@ -186,5 +180,20 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
 
     init {
         items = ArrayList()
+    }
+}
+
+fun executeAction(player: Player, commands: List<String>) {
+    runCatching {
+        PlaceholderAPI.setPlaceholders(player, commands).map { StringUtils.color(it) }.forEach {
+            when {
+                it.startsWith("console:") -> Bukkit.dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    it.removePrefix("console:")
+                )
+                it.startsWith("message:") -> player.sendMessage(it.removePrefix("message:"))
+                it.startsWith("player:") -> Bukkit.dispatchCommand(player, it.removePrefix("player:"))
+            }
+        }
     }
 }

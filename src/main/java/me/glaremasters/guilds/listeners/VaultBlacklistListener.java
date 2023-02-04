@@ -27,6 +27,7 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.ACFBukkitUtil;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.configuration.sections.GuildVaultSettings;
+import me.glaremasters.guilds.configuration.sections.VaultPickerSettings;
 import me.glaremasters.guilds.guild.Guild;
 import me.glaremasters.guilds.guild.GuildHandler;
 import me.glaremasters.guilds.messages.Messages;
@@ -39,6 +40,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.glaremasters.guilds.guis.ListGUIKt.executeAction;
 
 /**
  * Created by Glare
@@ -86,8 +89,14 @@ public class VaultBlacklistListener implements Listener {
         if (event.getClickedInventory() != null) {
             return;
         }
-        guilds.getGuiHandler().getVaults().get(guild, player).open(event.getWhoClicked());
-        guildHandler.getOpened().remove(player);
+        List<String> backAction = settingsManager.getProperty(VaultPickerSettings.BACK_ACTIONS);
+        if (backAction.isEmpty()) {
+            guilds.getGuiHandler().getVaults().get(guild, player).open(event.getWhoClicked());
+            guildHandler.getOpened().remove(player);
+        } else {
+            player.closeInventory();
+            executeAction(player, backAction);
+        }
     }
 
     /**

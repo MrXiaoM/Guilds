@@ -23,9 +23,11 @@
  */
 package me.glaremasters.guilds.placeholders
 
+import me.clip.placeholderapi.PlaceholderAPI
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.guild.GuildHandler
+import me.glaremasters.guilds.guild.GuildTier
 import me.glaremasters.guilds.utils.EconomyUtils
 import org.bukkit.entity.Player
 import java.text.SimpleDateFormat
@@ -50,12 +52,12 @@ class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpans
         return "2.1"
     }
 
-    override fun onPlaceholderRequest(player: Player?, arg: String): String {
+    override fun onPlaceholderRequest(player: Player?, params: String): String {
         if (player == null) {
             return ""
         }
         val api = Guilds.getApi() ?: return ""
-
+        val arg = PlaceholderAPI.setBracketPlaceholders(player, params)
         // Check formatted here because this needs to return before we check the guild
         if (arg.toLowerCase() == "formatted") {
             return guildHandler.getFormattedPlaceholder(player)
@@ -162,39 +164,72 @@ class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpans
 
             return (guild.guildScore.wins / guild.guildScore.loses).toString()
         }
-
-        val guild = api.getGuild(player) ?: return ""
-        val member = guild.getMember(player.uniqueId)
-        return when (arg.toLowerCase()) {
-            "id" -> guild.id.toString()
-            "name" -> guild.name
-            "master" -> guild.guildMaster.asOfflinePlayer.name.toString()
-            "member_count" -> guild.members.size.toString()
-            "prefix" -> guild.prefix
-            "members_online" -> guild.onlineMembers.size.toString()
-            "status" -> guild.status.name
-            "role" -> guild.getMember(player.uniqueId).role.name
-            "tier" -> guild.tier.level.toString()
-            "tier_name" -> guild.tier.name
-            "balance" -> EconomyUtils.format(guild.balance)
-            "balance_raw" -> guild.balance.toString()
-            "frd" -> guild.prosperity.toString()
-            "prosperity" -> guild.prosperity.toString()
-            "code_amount" -> guild.codes.size.toString()
-            "max_members" -> guild.tier.maxMembers.toString()
-            "max_balance" -> EconomyUtils.format(guild.tier.maxBankBalance)
-            "challenge_wins" -> guild.guildScore.wins.toString()
-            "challenge_loses" -> guild.guildScore.loses.toString()
-            "motd" -> guild.motd ?: ""
-            "join_time" -> date.format(Date(member.joinDate))
-            "vault_count" -> guild.vaults.size.toString()
-            else -> {
-                if (arg.startsWith("vault_locked_")) {
-                    val num = arg.removePrefix("vault_locked_").toIntOrNull()
-
-                }
-                ""
+        if (arg.startsWith("tier_")) {
+            val s = arg.removePrefix("tier_")
+            if (s.contains("_")) {
+                val tier = guildHandler.getGuildTier(s.substring(0, s.indexOf("_")).toIntOrNull() ?: -1)
+                if (tier != null)
+                    handleTierPlaceholder(tier, s.removePrefix("${tier}_"))?.also { return it }
             }
         }
+        val guild = api.getGuild(player) ?: return ""
+        val nextTier = guildHandler.getGuildTier(guild.tier.level + 1)
+        val member = guild.getMember(player.uniqueId)
+        return when (arg.toLowerCase()) {
+            "id" -> guild.id
+            "name" -> guild.name
+            "master" -> guild.guildMaster.asOfflinePlayer.name
+            "member_count" -> guild.members.size
+            "prefix" -> guild.prefix
+            "members_online" -> guild.onlineMembers.size
+            "status" -> guild.status.name
+            "role" -> member.role.name
+            "tier" -> guild.tier.level
+            "balance" -> EconomyUtils.format(guild.balance)
+            "balance_raw" -> guild.balance
+            "frd" -> guild.prosperity
+            "prosperity" -> guild.prosperity
+            "code_amount" -> guild.codes.size
+            "max_members" -> guild.tier.maxMembers
+            "max_balance" -> EconomyUtils.format(guild.tier.maxBankBalance)
+            "max_balance_raw" -> guild.tier.maxBankBalance
+            "challenge_wins" -> guild.guildScore.wins
+            "challenge_loses" -> guild.guildScore.loses
+            "motd" -> guild.motd ?: ""
+            "join_time" -> date.format(Date(member.joinDate))
+            "create_time" -> date.format(Date(guild.creationDate))
+            "vault_count" -> guild.vaults.size.toString()
+            "next_tier" -> nextTier?.level?.toString() ?: "MAX"
+            else -> when {
+                arg.startsWith("tier_") -> {
+                    val s = arg.removePrefix("tier_")
+                    handleTierPlaceholder(guild.tier, s)
+                }
+                arg.startsWith("next_tier_") -> {
+                    if (nextTier == null) return "MAX"
+                    val s = arg.removePrefix("next_tier_")
+                    handleTierPlaceholder(nextTier, s)
+                }
+                else -> null
+            }
+        }?.toString() ?: ""
     }
+    private fun handleTierPlaceholder(tier: GuildTier, s: String): String? = when(s) {
+        "level" -> tier.level
+        "name" -> tier.name
+        "cost" -> tier.cost
+        "frd" -> tier.prosperity
+        "prosperity" -> tier.prosperity
+        "max_allies" -> tier.maxAllies
+        "max_members" -> tier.maxMembers
+        "max_balance" -> EconomyUtils.format(tier.maxBankBalance)
+        "max_balance_raw" -> tier.maxBankBalance
+        "damage_multiplier" -> tier.damageMultiplier
+        "exp_multiplier" -> tier.mobXpMultiplier
+        "mob_xp_multiplier" -> tier.mobXpMultiplier
+        "vault_amount" -> tier.vaultAmount
+        "vault_count" -> tier.vaultAmount
+        else -> null
+    }?.toString()
+
 }

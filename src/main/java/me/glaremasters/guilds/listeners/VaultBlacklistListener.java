@@ -31,11 +31,14 @@ import me.glaremasters.guilds.configuration.sections.VaultPickerSettings;
 import me.glaremasters.guilds.guild.Guild;
 import me.glaremasters.guilds.guild.GuildHandler;
 import me.glaremasters.guilds.messages.Messages;
+import me.glaremasters.guilds.utils.Serialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -91,14 +94,34 @@ public class VaultBlacklistListener implements Listener {
         }
         List<String> backAction = settingsManager.getProperty(VaultPickerSettings.BACK_ACTIONS);
         if (backAction.isEmpty()) {
-            guilds.getGuiHandler().getVaults().get(guild, player).open(event.getWhoClicked());
-            guildHandler.getOpened().remove(player);
+            //guilds.getGuiHandler().getVaults().get(guild, player).open(event.getWhoClicked());
+           // guildHandler.getOpened().remove(player);
         } else {
             player.closeInventory();
             executeAction(player, backAction);
         }
     }
+    @EventHandler
+    public void onItemDrag(InventoryDragEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
 
+        Player player = (Player) event.getWhoClicked();
+
+        if (!guildHandler.getOpened().contains(player))
+            return;
+
+        if (event.getView().getTopInventory().getHolder() instanceof Serialization.Holder) {
+            Serialization.Holder holder = (Serialization.Holder) event.getView().getTopInventory().getHolder();
+            // 如果在3号仓库
+            if (holder.number == 3) {
+                if (event.getRawSlots().stream().anyMatch(it -> it < 54)) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
     /**
      * Check if their item is on the vault blacklist
      *
@@ -118,6 +141,23 @@ public class VaultBlacklistListener implements Listener {
         if (!guildHandler.getOpened().contains(player))
             return;
 
+        if (event.getView().getTopInventory().getHolder() instanceof Serialization.Holder) {
+            Serialization.Holder holder = (Serialization.Holder) event.getView().getTopInventory().getHolder();
+            // 如果在3号仓库
+            if (holder.number == 3) {
+                // 禁止Shift点击自己的物品栏
+                if (event.getRawSlot() >= 54 && event.isShiftClick()) {
+                    event.setCancelled(true);
+                    return;
+                }
+                // 禁止在指针有物品的情况下点击3号仓库
+                if (event.getRawSlot() < 54 && !event.isShiftClick()
+                        && event.getCursor() != null && !event.getCursor().getType().isAir()) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
         // get the item clicked
         ItemStack item = event.getCurrentItem();
 

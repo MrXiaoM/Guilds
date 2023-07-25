@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.admin
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
@@ -43,13 +44,22 @@ import org.bukkit.entity.Player
 internal class CommandAdminVault : BaseCommand() {
     @Dependency lateinit var guilds: Guilds
     @Dependency lateinit var guildHandler: GuildHandler
+    @Dependency lateinit var settingsManager: SettingsManager
 
     @Subcommand("admin vault")
     @Description("{@@descriptions.admin-vault}")
     @CommandPermission(Constants.ADMIN_PERM)
     @CommandCompletion("@guilds")
     @Syntax("%guild %vault-number")
-    fun vault(player: Player, @Flags("other") @Values("@guilds") guild: Guild) {
-        guilds.guiHandler.vaults.get(guild, player).open(player)
+    fun vault(player: Player, @Flags("other") @Values("@guilds") guild: Guild, amount: Int) {
+        //guilds.guiHandler.vaults.get(guild, player).open(player)
+        if (amount < 1 || amount > guild.vaults.size) return
+        try {
+            guildHandler.getGuildVault(guild, amount)
+        } catch (ex: IndexOutOfBoundsException) {
+            guildHandler.vaults[guild]?.add(guildHandler.createNewVault(settingsManager))
+        }
+        player.openInventory(guildHandler.getGuildVault(guild, amount))
+        guildHandler.opened.add(player)
     }
 }

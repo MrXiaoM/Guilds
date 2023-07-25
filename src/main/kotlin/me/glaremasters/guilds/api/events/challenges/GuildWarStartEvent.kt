@@ -34,6 +34,7 @@ class GuildWarStartEvent(val challenger: Guild, val defender: Guild) : Event() {
     }
 
     companion object {
+        @JvmStatic
         val handlerList = HandlerList()
     }
 }

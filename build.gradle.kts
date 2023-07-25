@@ -29,7 +29,8 @@ apply {
 
 repositories {
     mavenCentral()
-    maven("https://crystal.app.lss233.com/repositories/minecraft/")
+    maven("https://maven.fastmirror.net/repositories/minecraft/")
+    maven("https://repo.huaweicloud.com/repository/maven/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
         content { includeGroup("org.bukkit") }
     }

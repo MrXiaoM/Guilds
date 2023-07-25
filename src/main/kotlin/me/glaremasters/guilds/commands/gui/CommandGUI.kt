@@ -38,6 +38,7 @@ import me.glaremasters.guilds.exceptions.InvalidTierException
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.utils.Constants
+import org.apache.logging.log4j.core.config.Property
 import org.bukkit.entity.Player
 
 @CommandAlias("%guilds")
@@ -86,28 +87,29 @@ internal class CommandGUI : BaseCommand() {
     fun members(player: Player, guild: Guild) {
         guilds.guiHandler.members.get(guild, player).open(player)
     }
-
+/*
     @Subcommand("vaults")
     @Description("{@@descriptions.vault}")
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "vault")
     fun vault(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild) {
-        guilds.guiHandler.vaults.get(guild, player).open(player)
+        //guilds.guiHandler.vaults.get(guild, player).open(player)
     }
+*/
 
     @Subcommand("vault")
     @Description("{@@descriptions.vault}")
     @Syntax("%amount")
     @CommandPermission(Constants.BASE_PERM + "vault")
     fun vaultSel(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild, amount: Int) {
-        guilds.guiHandler.vaults.get(guild, player).open(player)
+        //guilds.guiHandler.vaults.get(guild, player).open(player)
         if (amount < 1 || amount > guild.vaults.size) return
         try {
             guildHandler.getGuildVault(guild, amount)
         } catch (ex: IndexOutOfBoundsException) {
             guildHandler.vaults[guild]?.add(guildHandler.createNewVault(settingsManager))
         }
-        player.openInventory(guildHandler.getGuildVault(guild, amount))
+        val view = player.openInventory(guildHandler.getGuildVault(guild, amount))
         guildHandler.opened.add(player)
     }
 }

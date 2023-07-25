@@ -286,7 +286,7 @@ public final class Guilds extends JavaPlugin {
         // Load the optional listeners
         optionalListeners();
 
-        api = new GuildsAPI(guildHandler, cooldownHandler);
+        api = new GuildsAPI(guildHandler, challengeHandler, cooldownHandler);
 
         chatListener = new ChatListener(this);
 

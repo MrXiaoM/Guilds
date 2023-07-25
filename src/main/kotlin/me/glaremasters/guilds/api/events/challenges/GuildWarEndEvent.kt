@@ -34,6 +34,7 @@ class GuildWarEndEvent(val challenger: Guild, val defender: Guild, val winner: G
     }
 
     companion object {
+        @JvmStatic
         val handlerList = HandlerList()
     }
 }

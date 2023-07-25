@@ -523,7 +523,10 @@ public class GuildHandler {
      * @return the inventory to open
      */
     public Inventory getGuildVault(Guild guild, int vault) {
-        return vaults.get(guild).get(vault - 1);
+        Inventory inv = vaults.get(guild).get(vault - 1);
+        Serialization.Holder holder = (Serialization.Holder) inv.getHolder();
+        if (holder != null) holder.number = vault;
+        return inv;
     }
 
     /**

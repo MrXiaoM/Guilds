@@ -39,5 +39,5 @@ class GUIHandler(guilds: Guilds, settingsManager: SettingsManager, guildHandler:
     val list = ListGUI(guilds, settingsManager, guildHandler)
     //val info = InfoGUI(guilds, settingsManager, guildHandler, cooldownHandler, commandManager)
     val members = MembersGUI(guilds, settingsManager, guildHandler)
-    val vaults = VaultGUI(guilds, settingsManager, guildHandler)
+    //val vaults = VaultGUI(guilds, settingsManager, guildHandler)
 }

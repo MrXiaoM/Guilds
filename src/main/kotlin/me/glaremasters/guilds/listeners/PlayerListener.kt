@@ -38,6 +38,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -111,6 +112,23 @@ class PlayerListener(private val guilds: Guilds, private val settingsManager: Se
     fun PlayerJoinEvent.onPermCheck() {
         guildHandler.addGuildPerms(permission, player)
         guildHandler.addRolePerm(permission, player)
+    }
+
+    @EventHandler
+    fun PlayerJoinEvent.onInviteNotice() {
+        if (guildHandler.getGuild(player) != null) return
+        val guildList = guildHandler.getInvitedGuilds(player)
+        if (guildList.isNotEmpty()) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                "&7[&6&l公会&7] &f你有待处理的公会邀请请求: " + guildList.joinToString(", ")
+            ))
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                "&7[&6&l公会&7] &f使用 /g accept <公会> 同意邀请请求"
+            ))
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                "&7[&6&l公会&7] &f使用 /g deny <公会> 拒绝邀请请求"
+            ))
+        }
     }
 
     @EventHandler

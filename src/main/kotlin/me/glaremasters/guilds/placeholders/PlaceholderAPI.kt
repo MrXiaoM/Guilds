@@ -26,6 +26,7 @@ package me.glaremasters.guilds.placeholders
 import me.clip.placeholderapi.PlaceholderAPI
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.challenges.ChallengeHandler
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.guild.GuildTier
 import me.glaremasters.guilds.utils.EconomyUtils
@@ -34,7 +35,10 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
 
-class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpansion() {
+class PlaceholderAPI(
+    private val guildHandler: GuildHandler,
+    private val challengeHandler: ChallengeHandler
+) : PlaceholderExpansion() {
     val date = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
     override fun getIdentifier(): String {
         return "guilds"
@@ -200,6 +204,11 @@ class PlaceholderAPI(private val guildHandler: GuildHandler) : PlaceholderExpans
             "create_time" -> date.format(Date(guild.creationDate))
             "vault_count" -> guild.vaults.size.toString()
             "next_tier" -> nextTier?.level?.toString() ?: "MAX"
+            "challenge_guild" -> challengeHandler.getChallenge(guild)?.run {
+                if (guildHandler.isSameGuild(guild, challenger))
+                    defender.name
+                else challenger.name
+            } ?: ""
             else -> when {
                 arg.startsWith("tier_") -> {
                     val s = arg.removePrefix("tier_")

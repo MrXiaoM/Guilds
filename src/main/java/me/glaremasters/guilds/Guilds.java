@@ -243,7 +243,7 @@ public final class Guilds extends JavaPlugin {
 
         // If they have placeholderapi, enable it.
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PlaceholderAPI(guildHandler).register();
+            new PlaceholderAPI(guildHandler, challengeHandler).register();
             guildHandler.setPapi(true);
         }
         // start bstats
@@ -286,7 +286,7 @@ public final class Guilds extends JavaPlugin {
         // Load the optional listeners
         optionalListeners();
 
-        api = new GuildsAPI(guildHandler, challengeHandler, cooldownHandler);
+        api = new GuildsAPI(guildHandler, settingsHandler, challengeHandler, cooldownHandler);
 
         chatListener = new ChatListener(this);
 

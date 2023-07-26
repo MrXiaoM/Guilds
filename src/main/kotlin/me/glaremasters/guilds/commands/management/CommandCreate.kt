@@ -142,8 +142,9 @@ internal class CommandCreate : BaseCommand() {
                 gb.invitedMembers(arrayListOf())
                 gb.allies(arrayListOf())
                 gb.pendingAllies(arrayListOf())
-
-                gb.vaults(arrayListOf())
+                gb.vaults(guildHandler.getGuildTier(1)?.vaultAmount?.run {
+                    return@run (0 until this).map { "{\"size\":54,\"items\":{}}" }
+                } ?: arrayListOf())
                 gb.codes(arrayListOf())
 
                 val guild = gb.build()

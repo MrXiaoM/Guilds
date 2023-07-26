@@ -32,6 +32,7 @@ import me.glaremasters.guilds.guild.Guild;
 import me.glaremasters.guilds.guild.GuildHandler;
 import me.glaremasters.guilds.messages.Messages;
 import me.glaremasters.guilds.utils.Serialization;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -92,12 +93,20 @@ public class VaultBlacklistListener implements Listener {
         if (event.getClickedInventory() != null) {
             return;
         }
+        player.closeInventory();
+        guildHandler.getOpened().remove(player);
         List<String> backAction = settingsManager.getProperty(VaultPickerSettings.BACK_ACTIONS);
         if (backAction.isEmpty()) {
             //guilds.getGuiHandler().getVaults().get(guild, player).open(event.getWhoClicked());
-           // guildHandler.getOpened().remove(player);
         } else {
-            player.closeInventory();
+            if (event.getView().getTopInventory().getHolder() instanceof Serialization.Holder) {
+                Serialization.Holder holder = (Serialization.Holder) event.getView().getTopInventory().getHolder();
+                // 如果在3号仓库
+                if (holder.number == 2 || holder.number == 3) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dm open cd_guild_war " + player.getName());
+                    return;
+                }
+            }
             executeAction(player, backAction);
         }
     }

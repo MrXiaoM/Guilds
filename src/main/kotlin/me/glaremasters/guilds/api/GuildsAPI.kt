@@ -23,7 +23,9 @@
  */
 package me.glaremasters.guilds.api
 
+import ch.jalu.configme.SettingsManager
 import me.glaremasters.guilds.challenges.ChallengeHandler
+import me.glaremasters.guilds.configuration.SettingsHandler
 import java.util.UUID
 import me.glaremasters.guilds.cooldowns.CooldownHandler
 import me.glaremasters.guilds.guild.Guild
@@ -34,7 +36,12 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 
-class GuildsAPI(val guildHandler: GuildHandler, val challengeHandler: ChallengeHandler, val cooldownHandler: CooldownHandler) {
+class GuildsAPI(
+    val guildHandler: GuildHandler,
+    val settingsHandler: SettingsHandler,
+    val challengeHandler: ChallengeHandler,
+    val cooldownHandler: CooldownHandler
+) {
 
     /**
      *

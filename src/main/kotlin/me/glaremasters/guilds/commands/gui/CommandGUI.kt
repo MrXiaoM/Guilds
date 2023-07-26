@@ -34,6 +34,7 @@ import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import dev.triumphteam.gui.guis.PaginatedGui
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.challenges.ChallengeHandler
 import me.glaremasters.guilds.exceptions.InvalidTierException
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -46,6 +47,7 @@ internal class CommandGUI : BaseCommand() {
     @Dependency lateinit var guilds: Guilds
     @Dependency lateinit var guildHandler: GuildHandler
     @Dependency lateinit var settingsManager: SettingsManager
+    @Dependency lateinit var challengeHandler: ChallengeHandler
 
     @Subcommand("buff")
     @Description("{@@descriptions.buff}")
@@ -79,6 +81,18 @@ internal class CommandGUI : BaseCommand() {
             (chain.getTaskData<Any>("data") as PaginatedGui).open(player)
         }.execute()
     }
+    @Subcommand("gui")
+    @Description("awa")
+    @Syntax("%title %command")
+    @CommandPermission(Constants.BASE_PERM + "list")
+    fun gui(player: Player, title: String, command: String) {
+        val chain = Guilds.newChain<Any>()
+        chain.async {
+            chain.setTaskData("data", guilds.guiHandler.list.get(player, title, command))
+        } .sync {
+            (chain.getTaskData<Any>("data") as PaginatedGui).open(player)
+        }.execute()
+    }
 
     @Subcommand("members")
     @Description("{@@descriptions.members}")
@@ -101,15 +115,23 @@ internal class CommandGUI : BaseCommand() {
     @Description("{@@descriptions.vault}")
     @Syntax("%amount")
     @CommandPermission(Constants.BASE_PERM + "vault")
-    fun vaultSel(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild, amount: Int) {
+    fun vaul(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild, amount: Int) {
         //guilds.guiHandler.vaults.get(guild, player).open(player)
-        if (amount < 1 || amount > guild.vaults.size) return
-        try {
-            guildHandler.getGuildVault(guild, amount)
-        } catch (ex: IndexOutOfBoundsException) {
-            guildHandler.vaults[guild]?.add(guildHandler.createNewVault(settingsManager))
+        if (amount < 1 || amount > guild.tier.vaultAmount) return
+        if ((amount == 2 || amount == 3) && challengeHandler.getChallenge(guild) != null) {
+            player.sendMessage("公会战期间禁止操作战利品仓库")
+            return
         }
-        val view = player.openInventory(guildHandler.getGuildVault(guild, amount))
+        fun check() {
+            try {
+                guildHandler.getGuildVault(guild, amount)
+            } catch (ex: IndexOutOfBoundsException) {
+                guildHandler.vaults[guild]?.add(guildHandler.createNewVault(settingsManager))
+                check()
+            }
+        }
+        check()
+        player.openInventory(guildHandler.getGuildVault(guild, amount))
         guildHandler.opened.add(player)
     }
 }

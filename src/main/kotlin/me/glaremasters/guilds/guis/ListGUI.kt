@@ -44,15 +44,15 @@ import java.text.SimpleDateFormat
 class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsManager, private val guildHandler: GuildHandler) {
     private val items: MutableList<GuiItem>
 
-    fun get(player: Player): PaginatedGui {
-            val name = settingsManager.getProperty(GuildListSettings.GUILD_LIST_NAME)
+    fun get(player: Player, title: String? = null, overrideAction: String? = null): PaginatedGui {
+            val name = title ?: settingsManager.getProperty(GuildListSettings.GUILD_LIST_NAME)
             val gui = PaginatedGui(6, 45, StringUtils.color(name))
 
             gui.setDefaultClickAction { event ->
                 event.isCancelled = true
             }
 
-            createListItems(gui, player)
+            createListItems(gui, player, overrideAction)
             addBottom(gui)
             createButtons(player, gui)
 
@@ -81,7 +81,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         gui.setItem(6, 5, back)
     }
 
-    private fun createListItems(gui: PaginatedGui, player: Player) {
+    private fun createListItems(gui: PaginatedGui, player: Player, overrideAction: String? = null) {
         val guilds = guildHandler.guilds
 
         when (settingsManager.getProperty(GuildListSettings.GUILD_LIST_SORT).toUpperCase()) {
@@ -96,7 +96,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         }
 
         guilds.forEach { guild ->
-            setListItem(guild, player)
+            setListItem(guild, player, overrideAction)
         }
 
         items.forEach { item ->
@@ -106,7 +106,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         items.clear()
     }
 
-    private fun setListItem(guild: Guild, player: Player) {
+    private fun setListItem(guild: Guild, player: Player, overrideAction: String? = null) {
         val defaultUrl = settingsManager.getProperty(GuildListSettings.GUILD_LIST_HEAD_DEFAULT_URL)
         val useDefaultUrl = settingsManager.getProperty(GuildListSettings.USE_DEFAULT_TEXTURE)
         val item = if (!useDefaultUrl) guild.skull else GuildSkull(defaultUrl).itemStack
@@ -136,7 +136,14 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
                 player.closeInventory()
                 Bukkit.dispatchCommand(player, "guild request ${guild.name}")
             }
-            else guilds.guiHandler.members.get(guild, player).open(event.whoClicked)
+            else {
+                if (overrideAction != null) {
+                    player.closeInventory();
+                    Bukkit.dispatchCommand(player, overrideAction.replace("%guild_name%", guild.name))
+                } else {
+                    guilds.guiHandler.members.get(guild, player).open(event.whoClicked)
+                }
+            }
         }
 
         items.add(guiItem)
@@ -172,7 +179,8 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
                     .replace("{guild-challenge-wins}", guild.guildScore.wins.toString())
                     .replace("{guild-challenge-loses}", guild.guildScore.loses.toString())
                     .replace("{creation}", sdf.format(guild.creationDate))
-                    .replace("{guild-tier-name}", tierName)))
+                    .replace("{guild-tier-name}", tierName)
+                    .replace("{guild-motd}", guild.motd ?: "")))
         }
 
         return updated

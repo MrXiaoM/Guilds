@@ -85,6 +85,7 @@ import java.util.stream.Stream;
 public final class Guilds extends JavaPlugin {
 
     private static GuildsAPI api;
+    private static Guilds instance;
     private static Gson gson;
     private ACFHandler acfHandler;
     private GuildHandler guildHandler;
@@ -108,6 +109,10 @@ public final class Guilds extends JavaPlugin {
 
     public static GuildsAPI getApi() {
         return Guilds.api;
+    }
+
+    public static Guilds getInstance() {
+        return Guilds.instance;
     }
 
     @Override
@@ -286,6 +291,7 @@ public final class Guilds extends JavaPlugin {
         // Load the optional listeners
         optionalListeners();
 
+        instance = this;
         api = new GuildsAPI(guildHandler, settingsHandler, challengeHandler, cooldownHandler);
 
         chatListener = new ChatListener(this);

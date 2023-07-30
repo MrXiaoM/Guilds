@@ -35,14 +35,15 @@ import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.guild.GuildMember
 import me.glaremasters.guilds.utils.GuiUtils
 import me.glaremasters.guilds.utils.StringUtils
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MembersGUI(private val guilds: Guilds, private val settingsManager: SettingsManager, private val guildHandler: GuildHandler) {
 
-    fun get(guild: Guild, player: Player): Gui {
-        val name = settingsManager.getProperty(GuildInfoMemberSettings.GUI_NAME).replace("{name}", guild.name)
+    fun get(guild: Guild, player: Player, title: String? = null, overrideAction: String? = null): Gui {
+        val name = title ?: settingsManager.getProperty(GuildInfoMemberSettings.GUI_NAME).replace("{name}", guild.name)
         val gui = Gui(6, StringUtils.color(name))
 
         gui.setDefaultClickAction { event ->
@@ -56,7 +57,7 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
             if (playerGuild == null) guilds.guiHandler.list.get(p).open(event.whoClicked)// else guilds.guiHandler.info.get(playerGuild, p).open(event.whoClicked)
         }
 
-        addItems(gui, guild, player)
+        addItems(gui, guild, player, overrideAction)
         addBackground(gui)
         return gui
     }
@@ -67,7 +68,7 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
      * @param pane the pane to be added to
      * @param guild the guild of the player
      */
-    private fun addItems(gui: Gui, guild: Guild, player: Player) {
+    private fun addItems(gui: Gui, guild: Guild, player: Player, overrideAction: String? = null) {
         val members = guild.members
 
         when (settingsManager.getProperty(GuildInfoMemberSettings.SORT_ORDER).toUpperCase()) {
@@ -95,6 +96,7 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
             lore.forEach { line ->
                 updated.add(StringUtils.color(line
                         .replace("{name}", name.toString()))
+                        .replace("{guild}", guild.name)
                         .replace("{role}", role.name)
                         .replace("{join}", sdf.format(Date(member.joinDate)))
                         .replace("{login}", sdf.format(Date(member.lastLogin)))
@@ -103,6 +105,17 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
 
             val item = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_MATERIAL), settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_NAME).replace("{player}", name.toString()), updated))
             item.setAction { event ->
+                if (overrideAction != null) {
+                    Bukkit.dispatchCommand(
+                        player, StringUtils.color(overrideAction
+                            .replace("{name}", name.toString()))
+                            .replace("{guild}", guild.name)
+                            .replace("{role}", role.name)
+                            .replace("{join}", sdf.format(Date(member.joinDate)))
+                            .replace("{login}", sdf.format(Date(member.lastLogin)))
+                            .replace("{status}", status)
+                    )
+                }
                 event.isCancelled = true
             }
             gui.addItem(item)

@@ -179,7 +179,7 @@ class PlaceholderAPI(
         val guild = api.getGuild(player) ?: return ""
         val nextTier = guildHandler.getGuildTier(guild.tier.level + 1)
         val member = guild.getMember(player.uniqueId)
-        return when (arg.toLowerCase()) {
+        return when (arg.lowercase()) {
             "id" -> guild.id
             "name" -> guild.name
             "master" -> guild.guildMaster.asOfflinePlayer.name
@@ -210,6 +210,10 @@ class PlaceholderAPI(
                 else challenger.name
             } ?: ""
             else -> when {
+                arg.startsWith("is_member_") -> {
+                    val s = arg.removePrefix("is_member_")
+                    guild.members.any { it.name?.equals(s, true) ?: false }
+                }
                 arg.startsWith("tier_") -> {
                     val s = arg.removePrefix("tier_")
                     handleTierPlaceholder(guild.tier, s)

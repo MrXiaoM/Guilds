@@ -94,6 +94,14 @@ internal class CommandGUI : BaseCommand() {
         }.execute()
     }
 
+    @Subcommand("mgui")
+    @Description("awa")
+    @Syntax("%title %command")
+    @CommandPermission(Constants.BASE_PERM + "members")
+    fun mgui(player: Player, guild: Guild, title: String, command: String) {
+        guilds.guiHandler.members.get(guild, player).open(player)
+    }
+
     @Subcommand("members")
     @Description("{@@descriptions.members}")
     @Syntax("")

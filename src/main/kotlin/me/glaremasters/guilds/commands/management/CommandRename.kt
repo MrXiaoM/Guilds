@@ -36,6 +36,7 @@ import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildRenameEvent
 import me.glaremasters.guilds.configuration.sections.CostSettings
 import me.glaremasters.guilds.configuration.sections.GuildSettings
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -62,6 +63,7 @@ internal class CommandRename : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "rename")
     @Syntax("%name")
     fun rename(player: Player, @Conditions("perm:perm=RENAME") guild: Guild, name: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (guildHandler.checkGuildNames(name)) {
             throw ExpectationNotMet(Messages.CREATE__GUILD_NAME_TAKEN)
         }

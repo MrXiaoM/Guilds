@@ -35,6 +35,7 @@ import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import co.aikar.commands.annotation.Values
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.utils.Constants
@@ -52,6 +53,7 @@ internal class CommandAdminVault : BaseCommand() {
     @CommandCompletion("@guilds")
     @Syntax("%guild %vault-number")
     fun vault(player: Player, @Flags("other") @Values("@guilds") guild: Guild, amount: Int) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         //guilds.guiHandler.vaults.get(guild, player).open(player)
         if (amount < 1 || amount > guild.vaults.size) return
         try {

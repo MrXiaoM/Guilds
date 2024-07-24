@@ -23,7 +23,9 @@
  */
 package me.glaremasters.guilds.database.cooldowns;
 
+import ch.jalu.configme.SettingsManager;
 import me.glaremasters.guilds.Guilds;
+import me.glaremasters.guilds.configuration.sections.PluginSettings;
 import me.glaremasters.guilds.cooldowns.Cooldown;
 import me.glaremasters.guilds.database.DatabaseAdapter;
 import me.glaremasters.guilds.database.DatabaseBackend;
@@ -40,9 +42,11 @@ import java.util.UUID;
 public class CooldownAdapter {
     private final CooldownProvider provider;
     private String sqlTablePrefix;
+    private SettingsManager settingsManager;
 
     public CooldownAdapter(Guilds guilds, DatabaseAdapter adapter) {
         DatabaseBackend backend = adapter.getBackend();
+        settingsManager = guilds.getSettingsHandler().getMainConf();
         switch (backend) {
             default:
             case JSON:
@@ -75,22 +79,27 @@ public class CooldownAdapter {
     }
 
     public void createCooldown(Cooldown cooldown) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         createCooldown(cooldown.getCooldownType(), cooldown.getCooldownOwner(), cooldown.getCooldownExpiry());
     }
 
     public void createCooldown(Cooldown.Type cooldownType, UUID cooldownOwner, Long cooldownExpiry) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.createCooldown(sqlTablePrefix, cooldownType.getTypeName(), cooldownOwner.toString(), new Timestamp(cooldownExpiry));
     }
 
     public void deleteCooldown(Cooldown cooldown) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         deleteCooldown(cooldown.getCooldownType(), cooldown.getCooldownOwner());
     }
 
     public void deleteCooldown(Cooldown.Type cooldownType, UUID cooldownOwner) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.deleteCooldown(sqlTablePrefix, cooldownType.getTypeName(), cooldownOwner.toString());
     }
 
     public void saveCooldowns(Collection<Cooldown> cooldowns) {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         try {
             for (Cooldown cooldown : cooldowns) {
                 if (!cooldownExists(cooldown)) {

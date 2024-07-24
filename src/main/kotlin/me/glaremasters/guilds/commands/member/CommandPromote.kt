@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.member
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
@@ -35,6 +36,7 @@ import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import co.aikar.commands.annotation.Values
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -50,6 +52,8 @@ internal class CommandPromote : BaseCommand() {
     lateinit var guilds: Guilds
     @Dependency
     lateinit var guildHandler: GuildHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("promote")
     @Description("{@@descriptions.promote}")
@@ -57,6 +61,7 @@ internal class CommandPromote : BaseCommand() {
     @CommandCompletion("@members")
     @Syntax("%player")
     fun promote(player: Player, @Conditions("perm:perm=PROMOTE") guild: Guild, @Values("@members") @Single target: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val user = Bukkit.getOfflinePlayer(target)
 
         if (user.name.equals(player.name)) {

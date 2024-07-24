@@ -38,6 +38,7 @@ import co.aikar.commands.annotation.Syntax
 import co.aikar.commands.annotation.Values
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.configuration.sections.CodeSettings
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -61,6 +62,7 @@ internal class CommandCode : BaseCommand() {
     @Syntax("%uses")
     @CommandPermission(Constants.CODE_PERM + "create")
     fun create(player: Player, @Conditions("perm:perm=CREATE_CODE") guild: Guild, @Default("1") uses: Int) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (guild.getActiveCheck(settingsManager.getProperty(CodeSettings.ACTIVE_CODE_AMOUNT))) {
             throw ExpectationNotMet(Messages.CODES__MAX)
         }
@@ -78,6 +80,7 @@ internal class CommandCode : BaseCommand() {
     @Syntax("%code")
     @CommandCompletion("@activeCodes")
     fun delete(player: Player, @Conditions("perm:perm=DELETE_CODE") guild: Guild, @Values("@activeCodes") @Single code: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guild.removeCode(code)
         currentCommandIssuer.sendInfo(Messages.CODES__DELETED)
     }
@@ -88,6 +91,7 @@ internal class CommandCode : BaseCommand() {
     @Syntax("%code")
     @CommandCompletion("@activeCodes")
     fun info(player: Player, @Conditions("perm:perm=SEE_CODE_REDEEMERS") guild: Guild, @Values("@activeCodes") @Single code: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val guildCode = guild.getCode(code) ?: throw ExpectationNotMet(Messages.CODES__INVALID_CODE)
 
         currentCommandIssuer.sendInfo(Messages.CODES__INFO, "{code}", guildCode.id,
@@ -101,6 +105,7 @@ internal class CommandCode : BaseCommand() {
     @CommandPermission(Constants.CODE_PERM + "list")
     @Syntax("")
     fun list(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (guild.codes.isEmpty()) {
             throw ExpectationNotMet(Messages.CODES__EMPTY)
         }
@@ -119,6 +124,7 @@ internal class CommandCode : BaseCommand() {
     @CommandPermission(Constants.CODE_PERM + "redeem")
     @Syntax("%code")
     fun redeem(@Conditions("NoGuild") player: Player, code: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val guild = guildHandler.getGuildByCode(code) ?: throw ExpectationNotMet(Messages.CODES__INVALID_CODE)
 
         if (guildHandler.checkIfFull(guild)) {

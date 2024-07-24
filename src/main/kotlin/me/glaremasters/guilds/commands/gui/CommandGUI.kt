@@ -35,6 +35,7 @@ import co.aikar.commands.annotation.Syntax
 import dev.triumphteam.gui.guis.PaginatedGui
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.challenges.ChallengeHandler
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.InvalidTierException
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -54,6 +55,7 @@ internal class CommandGUI : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "buff")
     fun buff(player: Player, @Conditions("perm:perm=ACTIVATE_BUFF") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!guild.tier.isUseBuffs) {
             throw InvalidTierException()
         }
@@ -66,6 +68,7 @@ internal class CommandGUI : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "info")
     fun info(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guilds.guiHandler.info.get(guild, player).open(player)
     }
 */
@@ -74,6 +77,7 @@ internal class CommandGUI : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "list")
     fun list(player: Player) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val chain = Guilds.newChain<Any>()
         chain.async {
             chain.setTaskData("data", guilds.guiHandler.list.get(player))
@@ -86,6 +90,7 @@ internal class CommandGUI : BaseCommand() {
     @Syntax("%title %command")
     @CommandPermission(Constants.BASE_PERM + "list")
     fun gui(player: Player, title: String, command: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val chain = Guilds.newChain<Any>()
         chain.async {
             chain.setTaskData("data", guilds.guiHandler.list.get(player, title, command))
@@ -99,6 +104,7 @@ internal class CommandGUI : BaseCommand() {
     @Syntax("%title %command")
     @CommandPermission(Constants.BASE_PERM + "members")
     fun mgui(player: Player, guild: Guild, title: String, command: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guilds.guiHandler.members.get(guild, player).open(player)
     }
 
@@ -107,6 +113,7 @@ internal class CommandGUI : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "members")
     fun members(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guilds.guiHandler.members.get(guild, player).open(player)
     }
 /*
@@ -114,7 +121,8 @@ internal class CommandGUI : BaseCommand() {
     @Description("{@@descriptions.vault}")
     @Syntax("")
     @CommandPermission(Constants.BASE_PERM + "vault")
-    fun vault(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild) {
+    fun vaults(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         //guilds.guiHandler.vaults.get(guild, player).open(player)
     }
 */
@@ -123,7 +131,8 @@ internal class CommandGUI : BaseCommand() {
     @Description("{@@descriptions.vault}")
     @Syntax("%amount")
     @CommandPermission(Constants.BASE_PERM + "vault")
-    fun vaul(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild, amount: Int) {
+    fun vault(player: Player, @Conditions("perm:perm=OPEN_VAULT") guild: Guild, amount: Int) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         //guilds.guiHandler.vaults.get(guild, player).open(player)
         if (amount < 1 || amount > guild.tier.vaultAmount) return
         if ((amount == 2 || amount == 3) && challengeHandler.getChallenge(guild) != null) {

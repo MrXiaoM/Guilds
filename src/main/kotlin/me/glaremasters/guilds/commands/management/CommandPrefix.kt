@@ -35,6 +35,7 @@ import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildPrefixEvent
 import me.glaremasters.guilds.configuration.sections.GuildSettings
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -58,6 +59,7 @@ internal class CommandPrefix : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "prefix")
     @Syntax("%prefix")
     fun prefix(player: Player, @Conditions("perm:perm=CHANGE_PREFIX") guild: Guild, prefix: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (settingsManager.getProperty(GuildSettings.DISABLE_PREFIX)) {
             throw ExpectationNotMet(Messages.PREFIX__DISABLED)
         }

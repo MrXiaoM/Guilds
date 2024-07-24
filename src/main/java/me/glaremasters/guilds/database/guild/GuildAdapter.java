@@ -23,7 +23,9 @@
  */
 package me.glaremasters.guilds.database.guild;
 
+import ch.jalu.configme.SettingsManager;
 import me.glaremasters.guilds.Guilds;
+import me.glaremasters.guilds.configuration.sections.PluginSettings;
 import me.glaremasters.guilds.database.DatabaseAdapter;
 import me.glaremasters.guilds.database.DatabaseBackend;
 import me.glaremasters.guilds.database.guild.provider.GuildJsonProvider;
@@ -38,9 +40,11 @@ import java.util.List;
 public class GuildAdapter {
     private final GuildProvider provider;
     private String sqlTablePrefix;
+    private SettingsManager settingsManager;
 
     public GuildAdapter(Guilds guilds, DatabaseAdapter adapter) {
         DatabaseBackend backend = adapter.getBackend();
+        settingsManager = guilds.getSettingsHandler().getMainConf();
         switch (backend) {
             default:
             case JSON:
@@ -77,12 +81,14 @@ public class GuildAdapter {
     }
 
     public void saveGuilds(@NotNull List<Guild> guilds) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         for (Guild guild : guilds) {
             saveGuild(guild);
         }
     }
 
     public void saveGuild(@NotNull Guild guild) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         if (!guildExists(guild.getId().toString())) {
             createGuild(guild);
         } else {
@@ -91,14 +97,17 @@ public class GuildAdapter {
     }
 
     public void createGuild(@NotNull Guild guild) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.createGuild(sqlTablePrefix, guild.getId().toString(), Guilds.getGson().toJson(guild, Guild.class));
     }
 
     public void updateGuild(@NotNull Guild guild) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.updateGuild(sqlTablePrefix, guild.getId().toString(), Guilds.getGson().toJson(guild, Guild.class));
     }
 
     public void deleteGuild(@NotNull String id) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.deleteGuild(sqlTablePrefix, id);
     }
 }

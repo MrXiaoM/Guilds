@@ -35,6 +35,7 @@ import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.configuration.sections.ClaimSettings
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -58,6 +59,7 @@ internal class CommandClaim : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "claim")
     @Syntax("")
     fun claim(player: Player, @Conditions("perm:perm=CLAIM_LAND") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!ClaimUtils.isEnable(settingsManager)) {
             throw ExpectationNotMet(Messages.CLAIM__HOOK_DISABLED)
         }
@@ -99,6 +101,7 @@ internal class CommandClaim : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "unclaim")
     @Syntax("")
     fun unclaim(player: Player, @Conditions("perm:perm=UNCLAIM_LAND") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!ClaimUtils.isEnable(settingsManager)) {
             throw ExpectationNotMet(Messages.CLAIM__HOOK_DISABLED)
         }

@@ -32,6 +32,8 @@ import co.aikar.commands.annotation.Dependency
 import co.aikar.commands.annotation.Description
 import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
+import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -43,6 +45,8 @@ import org.bukkit.entity.Player
 @CommandAlias("%guilds")
 internal class CommandMotd : BaseCommand() {
     @Dependency
+    lateinit var guilds: Guilds
+    @Dependency
     lateinit var guildHandler: GuildHandler
 
     @Dependency
@@ -53,6 +57,7 @@ internal class CommandMotd : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "motd")
     @Syntax("")
     fun check(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val motd = guild.motd ?: throw ExpectationNotMet(Messages.MOTD__NOT_SET)
         currentCommandIssuer.sendInfo(Messages.MOTD__MOTD, "{motd}", motd)
     }
@@ -62,6 +67,7 @@ internal class CommandMotd : BaseCommand() {
     @CommandPermission(Constants.MOTD_PERM + "modify")
     @Syntax("")
     fun remove(player: Player, @Conditions("perm:perm=MODIFY_MOTD") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guild.motd = null
         currentCommandIssuer.sendInfo(Messages.MOTD__REMOVE)
     }
@@ -71,6 +77,7 @@ internal class CommandMotd : BaseCommand() {
     @CommandPermission(Constants.MOTD_PERM + "modify")
     @Syntax("%motd")
     fun set(player: Player, @Conditions("perm:perm=MODIFY_MOTD") guild: Guild, motd: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guild.motd = StringUtils.color(motd)
         currentCommandIssuer.sendInfo(Messages.MOTD__SUCCESS, "{motd}", guild.motd)
     }

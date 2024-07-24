@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.actions
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.CommandIssuer
 import co.aikar.commands.annotation.CommandAlias
@@ -32,6 +33,7 @@ import co.aikar.commands.annotation.Description
 import co.aikar.commands.annotation.Subcommand
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.actions.ActionHandler
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.messages.Messages
 import me.glaremasters.guilds.utils.Constants
@@ -41,11 +43,14 @@ import org.bukkit.command.CommandSender
 internal class CommandActions : BaseCommand() {
     @Dependency lateinit var guilds: Guilds
     @Dependency lateinit var actionHandler: ActionHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("cancel")
     @Description("{@@descriptions.cancel}")
     @CommandPermission(Constants.BASE_PERM + "cancel")
     fun cancel(player: CommandIssuer) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY) && !player.hasPermission("op")) return
         val action = actionHandler.getAction(player.getIssuer<CommandSender>()) ?: throw ExpectationNotMet(Messages.CANCEL__ERROR)
         currentCommandIssuer.sendInfo(Messages.CANCEL__SUCCESS)
         action.decline()
@@ -55,6 +60,7 @@ internal class CommandActions : BaseCommand() {
     @Description("{@@descriptions.confirm}")
     @CommandPermission(Constants.BASE_PERM + "confirm")
     fun confirm(player: CommandIssuer) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY) && !player.hasPermission("op")) return
         val action = actionHandler.getAction(player.getIssuer<CommandSender>()) ?: throw ExpectationNotMet(Messages.CONFIRM__ERROR)
         currentCommandIssuer.sendInfo(Messages.CONFIRM__SUCCESS)
         action.accept()

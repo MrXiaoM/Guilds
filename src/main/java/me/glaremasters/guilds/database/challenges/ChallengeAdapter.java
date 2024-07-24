@@ -23,7 +23,9 @@
  */
 package me.glaremasters.guilds.database.challenges;
 
+import ch.jalu.configme.SettingsManager;
 import me.glaremasters.guilds.Guilds;
+import me.glaremasters.guilds.configuration.sections.PluginSettings;
 import me.glaremasters.guilds.database.DatabaseAdapter;
 import me.glaremasters.guilds.database.DatabaseBackend;
 import me.glaremasters.guilds.database.challenges.provider.ChallengeJsonProvider;
@@ -38,9 +40,11 @@ import java.util.Set;
 public class ChallengeAdapter {
     private final ChallengeProvider provider;
     private String sqlTablePrefix;
+    private SettingsManager settingsManager;
 
     public ChallengeAdapter(Guilds guilds, DatabaseAdapter adapter) {
         DatabaseBackend backend = adapter.getBackend();
+        settingsManager = guilds.getSettingsHandler().getMainConf();
         switch (backend) {
             default:
             case JSON:
@@ -73,12 +77,14 @@ public class ChallengeAdapter {
    }
 
    public void saveChallenges(@NotNull Set<GuildChallenge> challenges) throws IOException {
+       if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         for (GuildChallenge challenge : challenges) {
             saveChallenge(challenge);
         }
    }
 
    public void saveChallenge(@NotNull GuildChallenge challenge) throws IOException {
+       if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
        if (!challengeExists(challenge.getId().toString())) {
            createChallenge(challenge);
        } else {
@@ -87,14 +93,17 @@ public class ChallengeAdapter {
    }
 
    public void createChallenge(@NotNull GuildChallenge challenge) throws IOException {
+       if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.createChallenge(sqlTablePrefix, challenge.getId().toString(), Guilds.getGson().toJson(challenge, GuildChallenge.class));
    }
 
     public void updateChallenge(@NotNull GuildChallenge challenge) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.updateChallenge(sqlTablePrefix, challenge.getId().toString(), Guilds.getGson().toJson(challenge, GuildChallenge.class));
     }
 
    public void deleteChallenge(@NotNull String id) throws IOException {
+       if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.deleteChallenge(sqlTablePrefix, id);
    }
 }

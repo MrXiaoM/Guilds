@@ -69,6 +69,7 @@ internal class CommandAccept : BaseCommand() {
     @CommandCompletion("@joinableGuilds")
     @Syntax("%guild")
     fun accept(@Conditions("NoGuild") player: Player, @Flags("other") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val cooldown = Cooldown.Type.Join.name
 
         if (cooldownHandler.hasCooldown(cooldown, player.uniqueId)) {

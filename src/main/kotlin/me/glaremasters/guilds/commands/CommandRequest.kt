@@ -37,6 +37,7 @@ import co.aikar.commands.annotation.Syntax
 import java.util.concurrent.TimeUnit
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.configuration.sections.CooldownSettings
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.cooldowns.Cooldown
 import me.glaremasters.guilds.cooldowns.CooldownHandler
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
@@ -59,6 +60,7 @@ internal class CommandRequest : BaseCommand() {
     @CommandCompletion("@guilds")
     @Syntax("%guild")
     fun request(@Conditions("NoGuild") player: Player, @Flags("other") target: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val cooldown = Cooldown.Type.Request.name
         val id = player.uniqueId
 

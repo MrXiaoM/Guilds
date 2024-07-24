@@ -73,6 +73,7 @@ internal class CommandLeave : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "leave")
     @Conditions("NotMigrating")
     fun leave(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (guild.isMaster(player)) currentCommandIssuer.sendInfo(Messages.LEAVE__WARNING_GUILDMASTER) else currentCommandIssuer.sendInfo(Messages.LEAVE__WARNING)
 
         val cooldownName = Cooldown.Type.Join.name

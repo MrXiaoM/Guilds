@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.member
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
@@ -35,6 +36,7 @@ import co.aikar.commands.annotation.Syntax
 import co.aikar.commands.annotation.Values
 import java.util.Locale
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.messages.Messages
 import me.glaremasters.guilds.utils.Constants
@@ -46,6 +48,8 @@ internal class CommandLanguage : BaseCommand() {
     lateinit var guilds: Guilds
     @Dependency
     lateinit var guildHandler: GuildHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("language")
     @Description("{@@descriptions.language}")
@@ -53,6 +57,7 @@ internal class CommandLanguage : BaseCommand() {
     @Syntax("%language")
     @CommandCompletion("@languages")
     fun language(player: Player, @Values("@languages") @Single language: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guilds.commandManager.setIssuerLocale(player, Locale.forLanguageTag(language))
         currentCommandIssuer.sendInfo(Messages.LANGUAGES__SET, "{language}", language)
     }

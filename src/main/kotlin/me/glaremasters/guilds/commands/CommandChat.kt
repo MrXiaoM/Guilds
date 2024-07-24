@@ -33,6 +33,7 @@ import co.aikar.commands.annotation.Optional
 import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.listeners.ChatListener
@@ -52,6 +53,7 @@ internal class CommandChat : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "chat")
     @Syntax("%msg")
     fun guildChat(player: Player, @Conditions("perm:perm=CHAT") guild: Guild, @Optional msg: String?) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (msg == null) {
             guilds.chatListener.handleToggle(player, ChatListener.ChatType.GUILD)
         } else {
@@ -64,6 +66,7 @@ internal class CommandChat : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "chat")
     @Syntax("%msg")
     fun chat(player: Player, @Conditions("perm:perm=ALLY_CHAT") guild: Guild, @Optional msg: String?) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (msg == null) {
             guilds.chatListener.handleToggle(player, ChatListener.ChatType.ALLY)
         } else {

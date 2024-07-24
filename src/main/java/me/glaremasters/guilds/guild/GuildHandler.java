@@ -139,7 +139,8 @@ public class GuildHandler {
         final YamlConfiguration conf = YamlConfiguration.loadConfiguration(new File(guildsPlugin.getDataFolder(), "roles.yml"));
         final ConfigurationSection roleSec = conf.getConfigurationSection("roles");
 
-        for (String s : roleSec.getKeys(false)) {
+        this.roles.clear();
+        if (roleSec != null) for (String s : roleSec.getKeys(false)) {
             final String path = s + ".permissions.";
             final String name = roleSec.getString(s + ".name");
             final String perm = roleSec.getString(s + ".permission-node");
@@ -161,7 +162,15 @@ public class GuildHandler {
         final YamlConfiguration conf = YamlConfiguration.loadConfiguration(new File(guildsPlugin.getDataFolder(), "tiers.yml"));
         final ConfigurationSection tierSec = conf.getConfigurationSection("tiers.list");
 
-        for (String key : tierSec.getKeys(false)) {
+        this.tiers.clear();
+        if (tierSec != null) for (String key : tierSec.getKeys(false)) {
+            Map<Integer, Integer> roleMembersLimit = new HashMap<>();
+            ConfigurationSection roleSec = tierSec.getConfigurationSection(key + ".role-members-limit");
+            if (roleSec != null) for (String role : roleSec.getKeys(false)) try {
+                int roleId = Integer.parseInt(role);
+                int limit = roleSec.getInt(role);
+                roleMembersLimit.put(roleId, limit);
+            } catch (Throwable ignored) {}
             tiers.add(GuildTier.builder()
                     .level(tierSec.getInt(key + ".level"))
                     .name(tierSec.getString(key + ".name"))
@@ -176,6 +185,7 @@ public class GuildHandler {
                     .maxAllies(tierSec.getInt(key + ".max-allies", 10))
                     .useBuffs(tierSec.getBoolean(key + ".use-buffs", true))
                     .permissions(tierSec.getStringList(key + ".permissions"))
+                    .roleMembersLimit(roleMembersLimit)
                     .build());
         }
     }

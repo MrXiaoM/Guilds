@@ -40,6 +40,7 @@ import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
+import me.glaremasters.guilds.guild.GuildRole
 import me.glaremasters.guilds.messages.Messages
 import me.glaremasters.guilds.utils.Constants
 import me.glaremasters.guilds.utils.RoleUtils
@@ -76,7 +77,19 @@ internal class CommandPromote : BaseCommand() {
             throw ExpectationNotMet(Messages.PROMOTE__CANT_PROMOTE)
         }
 
+        val operator = guild.getMember(player.uniqueId)
         val asMember = guild.getMember(user.uniqueId)
+
+        val targetRole = asMember.role.level - 1
+
+        if (targetRole <= operator.role.level) {
+            throw ExpectationNotMet(Messages.ERROR__ROLE_NO_PERMISSION)
+        }
+
+        val limit = guild.tier.roleMembersLimit[targetRole] ?: -1
+        if (limit >= 0 && guild.members.count { it.role.level == targetRole } >= limit) {
+            throw ExpectationNotMet(Messages.ERROR__TIER_NO_PERMISSION)
+        }
 
         RoleUtils.promote(guildHandler, guild, user)
 

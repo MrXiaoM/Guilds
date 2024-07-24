@@ -188,6 +188,9 @@ class PlaceholderAPI(
             "members_online" -> guild.onlineMembers.size
             "status" -> guild.status.name
             "role" -> member.role.name
+            "role_level" -> member.role.level
+            "role_level_promote" -> member.role.level - 1
+            "role_level_demote" -> member.role.level + 1
             "tier" -> guild.tier.level
             "balance" -> EconomyUtils.format(guild.balance)
             "balance_raw" -> guild.balance
@@ -210,9 +213,32 @@ class PlaceholderAPI(
                 else challenger.name
             } ?: ""
             else -> when {
+                arg.startsWith("member_count_") -> {
+                    val s = arg.removePrefix("member_count_").toIntOrNull()
+                    guild.members.count { it.role.level == s }
+                }
+                arg.startsWith("max_members_") -> {
+                    val s = arg.removePrefix("max_members_").toIntOrNull() ?: -1
+                    guild.tier.roleMembersLimit[s] ?: "-1"
+                }
                 arg.startsWith("is_member_") -> {
                     val s = arg.removePrefix("is_member_")
                     guild.members.any { it.name?.equals(s, true) ?: false }
+                }
+                arg.startsWith("role_level_") -> {
+                    val s = arg.removePrefix("role_level_")
+                    val targetMember = guild.members.firstOrNull { it.name?.equals(s, true) ?: false }
+                    targetMember?.role?.level ?: -1
+                }
+                arg.startsWith("role_level_promote_") -> {
+                    val s = arg.removePrefix("role_level_promote_")
+                    val targetMember = guild.members.firstOrNull { it.name?.equals(s, true) ?: false }
+                    targetMember?.role?.level?.run { this - 1 } ?: -1
+                }
+                arg.startsWith("role_level_demote_") -> {
+                    val s = arg.removePrefix("role_level_demote_")
+                    val targetMember = guild.members.firstOrNull { it.name?.equals(s, true) ?: false }
+                    targetMember?.role?.level?.run { this + 1 } ?: -1
                 }
                 arg.startsWith("tier_") -> {
                     val s = arg.removePrefix("tier_")

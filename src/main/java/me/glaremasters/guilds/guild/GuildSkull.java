@@ -76,7 +76,7 @@ public class GuildSkull {
         }
         PropertyMap propertyMap = profile.getProperties();
         for (Property property : propertyMap.get("textures")) {
-            byte[] decoded = Base64.getDecoder().decode(property.getValue());
+            byte[] decoded = Base64.getDecoder().decode(property.value());
             JsonObject texture = new JsonParser().parse(new String(decoded)).getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject();
             return texture.get("url").getAsString();
         }

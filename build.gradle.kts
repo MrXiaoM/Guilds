@@ -64,9 +64,9 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:2.7.2")
     implementation("org.slf4j:slf4j-api:1.7.25")
 
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("net.milkbowl:vault:1.7")
-    compileOnly("com.mojang:authlib:1.5.25")
+    compileOnly("com.mojang:authlib:6.0.52")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("top.mrxiaom:Residence:5.1.4.0")
 
@@ -83,7 +83,7 @@ tasks {
         mitLicense()
 
         javaVersions {
-            target(8)
+            target(17)
         }
 
         github("guilds-plugin", "guilds") {

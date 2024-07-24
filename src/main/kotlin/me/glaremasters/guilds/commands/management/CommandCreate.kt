@@ -139,6 +139,8 @@ internal class CommandCreate : BaseCommand() {
                 gb.home(null)
                 gb.balance(0.0)
                 gb.prosperity(0)
+                gb.residence("")
+                gb.residencePerm(arrayListOf("container"))
                 gb.tier(guildHandler.getGuildTier(1))
 
                 gb.invitedMembers(arrayListOf())

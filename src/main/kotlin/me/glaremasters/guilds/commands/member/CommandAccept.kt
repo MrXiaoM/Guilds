@@ -34,6 +34,8 @@ import co.aikar.commands.annotation.Description
 import co.aikar.commands.annotation.Flags
 import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
+import com.bekvon.bukkit.residence.Residence
+import com.bekvon.bukkit.residence.protection.FlagPermissions
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildJoinEvent
 import me.glaremasters.guilds.configuration.sections.PluginSettings
@@ -95,6 +97,24 @@ internal class CommandAccept : BaseCommand() {
         guild.addMember(player, guildHandler)
         guildHandler.addGuildPerms(permission, player)
         guildHandler.addRolePerm(permission, player)
+
+        guild.residence?.takeIf { it.isNotEmpty() }?.also { resName ->
+            val res = Residence.getInstance().residenceManagerAPI.getByName(resName)
+            val owner = guild.guildMaster.name
+            if (res != null && owner != null) {
+                val flags = guild.residencePerm.mapNotNull {
+                    com.bekvon.bukkit.residence.containers.Flags.getFlag(it)
+                }
+
+                if (res.permissions.playerHas(owner, com.bekvon.bukkit.residence.containers.Flags.admin, res.isOwner(owner))) {
+                    flags.forEach { res.permissions.setPlayerFlag(player.name, it.getName(), FlagPermissions.FlagState.TRUE) }
+                    val flagsTranslated = flags.joinToString("§f, §b") { it.translated }
+                    player.sendMessage("§7[§6§l领地§7]§e 你已被授予公会领地§b ${res.name} §e的§b $flagsTranslated §e权限")
+                } else {
+                    player.sendMessage("§7[§6§l领地§7]§e 公会长没有目标领地的管理权限，无法授予你相关权限")
+                }
+            }
+        }
 
         if (ClaimUtils.isEnable(settingsManager)) {
             val wrapper = WorldGuardWrapper.getInstance()

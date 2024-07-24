@@ -32,6 +32,8 @@ import co.aikar.commands.annotation.Dependency
 import co.aikar.commands.annotation.Description
 import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
+import com.bekvon.bukkit.residence.Residence
+import com.bekvon.bukkit.residence.protection.FlagPermissions
 import java.util.concurrent.TimeUnit
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.actions.ActionHandler
@@ -118,6 +120,7 @@ internal class CommandLeave : BaseCommand() {
 
                     guild.removeMember(player)
                     currentCommandIssuer.sendInfo(Messages.LEAVE__SUCCESSFUL)
+                    guild.memberLeaveOrKickClean(player.name)
                     guild.sendMessage(currentCommandManager, Messages.LEAVE__PLAYER_LEFT, "{player}", name)
                 }
                 actionHandler.removeAction(player)
@@ -128,5 +131,19 @@ internal class CommandLeave : BaseCommand() {
                 actionHandler.removeAction(player)
             }
         })
+    }
+}
+fun Guild.memberLeaveOrKickClean(player: String) {
+    residence?.takeIf { it.isNotEmpty() }?.also { resName ->
+        val res = Residence.getInstance().residenceManagerAPI.getByName(resName)
+        val owner = guildMaster.name
+        if (res != null && owner != null) {
+            if (res.permissions.playerHas(owner, com.bekvon.bukkit.residence.containers.Flags.admin, res.isOwner(owner))) {
+                res.permissions.removeAllPlayerFlags(player)
+                Guilds.getInstance().logger.info("玩家 $player 离开公会 $name，已移除其在 $residence 领地的权限")
+            } else {
+                Guilds.getInstance().logger.warning("玩家 $player 离开公会 $name，但公会长没有领地 $residence 的权限，无法移除权限")
+            }
+        }
     }
 }

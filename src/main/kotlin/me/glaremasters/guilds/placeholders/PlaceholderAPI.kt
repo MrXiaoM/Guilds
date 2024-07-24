@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.placeholders
 
+import com.bekvon.bukkit.residence.containers.Flags
 import me.clip.placeholderapi.PlaceholderAPI
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.glaremasters.guilds.Guilds
@@ -196,6 +197,7 @@ class PlaceholderAPI(
             "balance_raw" -> guild.balance
             "frd" -> guild.prosperity
             "prosperity" -> guild.prosperity
+            "residence" -> guild.residence ?: ""
             "code_amount" -> guild.codes.size
             "max_members" -> guild.tier.maxMembers
             "max_balance" -> EconomyUtils.format(guild.tier.maxBankBalance)
@@ -213,6 +215,16 @@ class PlaceholderAPI(
                 else challenger.name
             } ?: ""
             else -> when {
+                arg.startsWith("residence_perm_translated_") -> {
+                    (guild.residencePerm ?: listOf())
+                        .mapNotNull(Flags::getFlag)
+                        .joinToString(arg.removePrefix("residence_perm_translated_")) { it.translated }
+                }
+                arg.startsWith("residence_perm_") -> {
+                    (guild.residencePerm ?: listOf())
+                        .mapNotNull(Flags::getFlag)
+                        .joinToString(arg.removePrefix("residence_perm_")) { it.getName() }
+                }
                 arg.startsWith("member_count_") -> {
                     val s = arg.removePrefix("member_count_").toIntOrNull()
                     guild.members.count { it.role.level == s }

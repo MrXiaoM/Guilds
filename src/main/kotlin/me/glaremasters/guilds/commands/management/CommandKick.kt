@@ -38,6 +38,7 @@ import co.aikar.commands.annotation.Values
 import java.util.concurrent.TimeUnit
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildKickEvent
+import me.glaremasters.guilds.commands.member.memberLeaveOrKickClean
 import me.glaremasters.guilds.configuration.sections.CooldownSettings
 import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.cooldowns.Cooldown
@@ -107,6 +108,7 @@ internal class CommandKick : BaseCommand() {
         }
 
         guildHandler.removeFromChat(user.uniqueId)
+        user.name?.also { guild.memberLeaveOrKickClean(it) }
 
         currentCommandManager.getCommandIssuer(user).sendInfo(Messages.BOOT__KICKED, "{kicker}", player.name)
     }

@@ -28,6 +28,7 @@ apply {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://maven.fastmirror.net/repositories/minecraft/")
     maven("https://repo.huaweicloud.com/repository/maven/")
@@ -67,6 +68,7 @@ dependencies {
     compileOnly("net.milkbowl:vault:1.7")
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("me.clip:placeholderapi:2.11.2")
+    compileOnly("top.mrxiaom:Residence:5.1.4.0")
 
     slim("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }

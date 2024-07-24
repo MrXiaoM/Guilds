@@ -33,6 +33,7 @@ import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildKickEvent
+import me.glaremasters.guilds.commands.member.memberLeaveOrKickClean
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.messages.Messages
@@ -76,6 +77,7 @@ internal class CommandAdminRemovePlayer : BaseCommand() {
         }
 
         guildHandler.removeFromChat(user.uniqueId)
+        user.name?.also { guild.memberLeaveOrKickClean(it) }
 
         currentCommandIssuer.sendInfo(Messages.ADMIN__ADMIN_PLAYER_REMOVED, "{player}", user.name, "{guild}", guild.name)
         guild.sendMessage(currentCommandManager, Messages.ADMIN__ADMIN_GUILD_REMOVE, "{player}", user.name, "{guild}", guild.name)

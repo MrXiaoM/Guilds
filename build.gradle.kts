@@ -142,8 +142,8 @@ tasks {
     shadowJar {
         fun relocates(vararg dependencies: String) {
             dependencies.forEach {
-                val split = it.split(".")
-                val name = split.last()
+                val split = it.split('.')
+                val name = split[split.size - 1]
                 relocate(it, "me.glaremasters.guilds.libs.$name")
             }
         }
@@ -162,8 +162,8 @@ tasks {
     slimJar {
         fun relocates(vararg dependencies: String) {
             dependencies.forEach {
-                val split = it.split(".")
-                val name = split.last()
+                val split = it.split('.')
+                val name = split[split.size - 1]
                 relocate(it, "me.glaremasters.guilds.libs.$name")
             }
         }

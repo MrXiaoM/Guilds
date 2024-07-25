@@ -26,10 +26,12 @@ package me.glaremasters.guilds.utils;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -56,7 +58,7 @@ public class SkullUtils {
      * @return game profile
      */
     public static GameProfile getGameProfile(String url) {
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "guilds");
         profile.getProperties().put("textures", new Property("textures", url));
         return profile;
     }
@@ -67,17 +69,17 @@ public class SkullUtils {
      * @return skull
      */
     public static ItemStack getSkull(String skinUrl) {
-        ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         if (skinUrl.isEmpty()) return head;
 
         SkullMeta headMeta = (SkullMeta) head.getItemMeta();
         GameProfile profile = getGameProfile(skinUrl);
-        Field profileField;
+        Method profileMethod;
         try {
-            profileField = headMeta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(headMeta, profile);
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e1) {
+            profileMethod = headMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
+            profileMethod.setAccessible(true);
+            profileMethod.invoke(headMeta, profile);
+        } catch (ReflectiveOperationException e1) {
             e1.printStackTrace();
         }
         head.setItemMeta(headMeta);

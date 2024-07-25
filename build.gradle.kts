@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import net.kyori.indra.IndraPlugin
 import net.kyori.indra.IndraPublishingPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URL
 
 plugins {
@@ -21,7 +22,7 @@ group = "me.glaremasters"
 version = "3.5.7.2-SNAPSHOT"
 
 base {
-    archivesBaseName = "Guilds"
+    archivesName.set("Guilds")
 }
 
 apply {
@@ -115,11 +116,15 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.javaParameters = true
-        kotlinOptions.jvmTarget = "1.8"
+        compilerOptions {
+            javaParameters.set(true)
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 
     compileJava {
+        sourceCompatibility = "8"
+        targetCompatibility = "8"
         options.compilerArgs = listOf("-parameters")
     }
 

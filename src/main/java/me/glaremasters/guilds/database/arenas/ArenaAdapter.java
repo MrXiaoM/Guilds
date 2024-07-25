@@ -55,6 +55,7 @@ public class ArenaAdapter {
      */
     public ArenaAdapter(Guilds guilds, DatabaseAdapter adapter) {
         DatabaseBackend backend = adapter.getBackend();
+        settingsManager = guilds.getSettingsHandler().getMainConf();
         switch (backend) {
             default:
             case JSON:

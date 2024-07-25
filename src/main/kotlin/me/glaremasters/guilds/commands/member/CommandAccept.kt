@@ -38,6 +38,7 @@ import com.bekvon.bukkit.residence.Residence
 import com.bekvon.bukkit.residence.protection.FlagPermissions
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildJoinEvent
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.cooldowns.Cooldown
 import me.glaremasters.guilds.cooldowns.CooldownHandler
 import me.glaremasters.guilds.exceptions.ExpectationNotMet

@@ -38,11 +38,13 @@ import org.bukkit.inventory.Inventory
 
 /**
  * The `GuildsAPI` class provides functions for accessing information about guilds.
- *
- * @param guildHandler: an instance of the `GuildHandler` class
- * @param cooldownHandler: an instance of the `CooldownHandler` class
  */
-class GuildsAPI(val guildHandler: GuildHandler, val cooldownHandler: CooldownHandler) {
+class GuildsAPI(
+    val guildHandler: GuildHandler,
+    val settingsHandler: SettingsHandler,
+    val challengeHandler: ChallengeHandler,
+    val cooldownHandler: CooldownHandler
+) {
 
     /**
      * Get the guild of a player.

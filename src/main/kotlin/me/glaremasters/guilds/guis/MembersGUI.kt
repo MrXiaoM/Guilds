@@ -24,6 +24,7 @@
 package me.glaremasters.guilds.guis
 
 import ch.jalu.configme.SettingsManager
+import dev.triumphteam.gui.components.InteractionModifier
 import dev.triumphteam.gui.guis.GuiItem
 import dev.triumphteam.gui.guis.PaginatedGui
 import me.glaremasters.guilds.Guilds
@@ -43,7 +44,7 @@ import java.util.*
 
 class MembersGUI(private val guilds: Guilds, private val settingsManager: SettingsManager, private val guildHandler: GuildHandler) {
 
-    fun get(guild: Guild, player: Player, title: String? = null, overrideAction: String? = null): Gui {
+    fun get(guild: Guild, player: Player, title: String? = null, overrideAction: String? = null): PaginatedGui {
         val name = title ?: settingsManager.getProperty(GuildInfoMemberSettings.GUI_NAME).replace("{name}", guild.name)
         val gui = PaginatedGui(6, 45, StringUtils.color(name))
 

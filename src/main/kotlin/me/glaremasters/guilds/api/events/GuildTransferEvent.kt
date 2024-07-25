@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,4 +28,13 @@ import me.glaremasters.guilds.guild.Guild
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
+/**
+ * Class representing an event that occurs when the master of a guild is transferred to another player.
+ *
+ * @property player the player who performed the action
+ * @property guild the guild that was affected
+ * @property newMaster the new master of the guild
+ *
+ * @constructor Creates a new [GuildTransferEvent].
+ */
 class GuildTransferEvent(player: Player, guild: Guild, val newMaster: OfflinePlayer) : GuildEvent(player, guild)

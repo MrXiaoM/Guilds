@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -94,7 +94,7 @@ internal class CommandRename : BaseCommand() {
 
         guild.name = StringUtils.color(name)
 
-        if (ClaimUtils.isEnable(settingsManager)) {
+        if (ClaimUtils.isEnabled(settingsManager)) {
             val wrapper = WorldGuardWrapper.getInstance()
             if (ClaimUtils.checkAlreadyExist(wrapper, guild)) {
                 ClaimUtils.getGuildClaim(wrapper, player, guild).ifPresent { region ->

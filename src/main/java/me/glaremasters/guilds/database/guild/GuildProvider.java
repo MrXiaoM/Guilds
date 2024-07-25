@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,66 +31,83 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by GlareMasters
- * Date: 7/18/2018
- * Time: 1:47 AM
+ * A provider interface for guild data management.
  */
 public interface GuildProvider {
+
     /**
-     * Creates the container that will hold guilds
-     * @param tablePrefix the prefix, if any, to use
+     * Creates the container that will hold guilds.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @throws IOException if an error occurs while creating the container.
      */
     void createContainer(@Nullable String tablePrefix) throws IOException;
 
     /**
-     * Checks whether or not a guild with the specified id exists
-     * @param id the guild id
-     * @return true or false
+     * Checks whether a guild with the specified id exists.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @param id          the id of the guild to check.
+     * @return true if the guild exists, false otherwise.
+     * @throws IOException if an error occurs while checking for the guild.
      */
     boolean guildExists(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 
     /**
-     * Gets all guild IDs from the database
-     * @param tablePrefix the prefix, if any, to use
-     * @return a list of guild ids
+     * Gets all guild IDs from the database.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @return a list of all guild IDs in the database.
+     * @throws IOException if an error occurs while retrieving the guild IDs.
      */
+
     List<String> getAllGuildIds(@Nullable String tablePrefix) throws IOException;
 
     /**
-     * Gets all guilds from the database
-     * @param tablePrefix the prefix, if any, to use
-     * @return a list of guilds
+     * Gets all guilds from the database.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @return a list of all guilds in the database.
+     * @throws IOException if an error occurs while retrieving the guilds.
      */
     List<Guild> getAllGuilds(@Nullable String tablePrefix) throws IOException;
 
     /**
-     * Gets a single guild by id
-     * @param tablePrefix the prefix, if any, to use
-     * @param id the id of the guild to load
-     * @return the found guild or null
+     * Gets a single guild by id.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @param id          the id of the guild to retrieve.
+     * @return the found guild or null if no guild with the specified id was found.
+     * @throws IOException if an error occurs while retrieving the guild.
      */
     Guild getGuild(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 
     /**
-     * Saves a new Guild to the database
-     * @param tablePrefix the prefix, if any, to use
-     * @param id the id of the new guild
-     * @param data the data of the new guild
+     * Saves a new Guild to the database.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @param id          the id of the new guild.
+     * @param data        the data of the new guild.
+     * @throws IOException if an error occurs while saving the guild.
      */
     void createGuild(@Nullable String tablePrefix, String id, String data) throws IOException;
 
     /**
-     * Updates a Guild in the database
-     * @param tablePrefix the prefix, if any, to use
-     * @param id the id of the guild to update
-     * @param data the updated data of the guild
+     * Updates a Guild in the database.
+     *
+     * @param tablePrefix the prefix, if any, to use.
+     * @param id          the id of the guild to update.
+     * @param data        the updated data of the guild.
+     * @throws IOException if an error occurs while updating the guild.
      */
     void updateGuild(@Nullable String tablePrefix, @NotNull String id, @NotNull String data) throws IOException;
 
     /**
-     * Deletes a guild from the database
+     * Deletes a guild from the database.
+     *
      * @param tablePrefix the prefix, if any, to use
-     * @param id the guild id to delete
+     * @param id          the guild id to delete
+     * @throws IOException if an I/O error occurs while deleting the guild
      */
     void deleteGuild(@Nullable String tablePrefix, @NotNull String id) throws IOException;
 }

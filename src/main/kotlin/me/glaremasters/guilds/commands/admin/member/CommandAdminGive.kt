@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,9 +50,9 @@ internal class CommandAdminGive : BaseCommand() {
     @Subcommand("admin give")
     @Description("{@@descriptions.give}")
     @CommandPermission(Constants.ADMIN_PERM)
-    @CommandCompletion("@online")
+    @CommandCompletion("@players")
     @Syntax("%player %amount")
-    fun give(issuer: CommandIssuer, @Values("@online") player: OnlinePlayer, @Default("1") amount: Int) {
+    fun give(issuer: CommandIssuer, @Values("@players") player: OnlinePlayer, @Default("1") amount: Int) {
         player.player.inventory.addItem(guildHandler.getUpgradeTicket(settingsManager, amount))
         currentCommandIssuer.sendInfo(Messages.CONFIRM__SUCCESS)
     }

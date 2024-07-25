@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package me.glaremasters.guilds.commands.admin.homes
 
 import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
+import co.aikar.commands.CommandIssuer
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
 import co.aikar.commands.annotation.CommandPermission
@@ -53,7 +54,7 @@ internal class CommandAdminHome : BaseCommand() {
     @CommandPermission(Constants.ADMIN_PERM)
     @CommandCompletion("@guilds")
     @Syntax("%guild")
-    fun delete(player: Player, @Flags("other") @Values("@guilds") guild: Guild) {
+    fun delete(issuer: CommandIssuer, @Flags("other") @Values("@guilds") guild: Guild) {
         guild.delHome()
         currentCommandIssuer.sendInfo(Messages.ADMIN__DELHOME, "{guild}", guild.name)
     }

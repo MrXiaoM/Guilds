@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,8 +51,10 @@ import org.bukkit.entity.Player
 internal class CommandBank : BaseCommand() {
     @Dependency
     lateinit var guilds: Guilds
+
     @Dependency
     lateinit var guildHandler: GuildHandler
+
     @Dependency
     lateinit var economy: Economy
     @Dependency
@@ -73,6 +75,9 @@ internal class CommandBank : BaseCommand() {
     @Syntax("%amount")
     fun deposit(player: Player, @Conditions("perm:perm=DEPOSIT_MONEY") guild: Guild, amount: Double) {
         if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
+        if (amount.isNaN()) {
+            throw ExpectationNotMet(Messages.SYNTAX__AMOUNT)
+        }
         val balance = guild.balance
         val rounded = amount.rounded()
         val total = rounded + balance
@@ -109,6 +114,9 @@ internal class CommandBank : BaseCommand() {
     @Syntax("%amount")
     fun withdraw(player: Player, @Conditions("perm:perm=WITHDRAW_MONEY") guild: Guild, amount: Double) {
         if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
+        if (amount.isNaN()) {
+            throw ExpectationNotMet(Messages.SYNTAX__AMOUNT)
+        }
         val bal = guild.balance
         val rounded = amount.rounded()
 

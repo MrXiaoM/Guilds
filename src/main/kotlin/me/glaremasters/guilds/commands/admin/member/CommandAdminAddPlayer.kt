@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ internal class CommandAdminAddPlayer : BaseCommand() {
     @Subcommand("admin addplayer")
     @Description("{@@descriptions.admin-addplayer}")
     @CommandPermission(Constants.ADMIN_PERM)
-    @CommandCompletion("@guilds @online")
+    @CommandCompletion("@guilds @players")
     @Syntax("%guild %player")
     fun add(issuer: CommandIssuer, @Flags("other") @Values("@guilds") guild: Guild, target: String) {
         val user = Bukkit.getOfflinePlayer(target)
@@ -68,6 +68,7 @@ internal class CommandAdminAddPlayer : BaseCommand() {
         val name = guild.name
 
         guild.addMember(user, guildHandler)
+        guildHandler.addToMemberCache(user.uniqueId, guild.id)
 
         guildHandler.addGuildPerms(permission, user)
         guildHandler.addRolePerm(permission, user)

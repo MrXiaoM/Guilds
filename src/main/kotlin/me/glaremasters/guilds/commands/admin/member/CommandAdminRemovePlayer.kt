@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +71,7 @@ internal class CommandAdminRemovePlayer : BaseCommand() {
         guildHandler.removeGuildPerms(permission, user)
 
         guild.removeMember(user)
+        guildHandler.removeFromMemberCache(user.uniqueId)
 
         if (user.isOnline) {
             currentCommandManager.getCommandIssuer(user).sendInfo(Messages.ADMIN__PLAYER_REMOVED)

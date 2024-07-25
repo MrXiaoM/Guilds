@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -108,7 +108,7 @@ internal class CommandConsole : BaseCommand() {
                             throw ExpectationNotMet(Messages.MIGRATE__CONNECTION_FAILED)
                         }
 
-                        resolvedAdapter.guildAdapter.saveGuilds(guildHandler.guilds)
+                        resolvedAdapter.guildAdapter.saveGuilds(guildHandler.guilds.values)
                         resolvedAdapter.arenaAdapter.saveArenas(arenaHandler.getArenas())
                         resolvedAdapter.cooldownAdapter.saveCooldowns(cooldownHandler.cooldowns.values)
                         resolvedAdapter.challengeAdapter.saveChallenges(challengeHandler.challenges)
@@ -147,7 +147,7 @@ internal class CommandConsole : BaseCommand() {
             throw ExpectationNotMet(Messages.ERROR__CONSOLE_COMMAND)
         }
 
-        if (!ClaimUtils.isEnable(settingsManager)) {
+        if (!ClaimUtils.isEnabled(settingsManager)) {
             throw ExpectationNotMet(Messages.CLAIM__HOOK_DISABLED)
         }
 
@@ -155,7 +155,7 @@ internal class CommandConsole : BaseCommand() {
         actionHandler.addAction(issuer.getIssuer(), object : ConfirmAction {
             override fun accept() {
                 val wrapper = WorldGuardWrapper.getInstance()
-                guildHandler.guilds.forEach { guild ->
+                guildHandler.guilds.values.forEach { guild ->
                     if (ClaimUtils.checkAlreadyExist(wrapper, guild)) {
                         ClaimUtils.removeClaim(wrapper, guild)
                     }

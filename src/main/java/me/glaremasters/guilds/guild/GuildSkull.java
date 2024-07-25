@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,96 +23,75 @@
  */
 package me.glaremasters.guilds.guild;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
-import me.glaremasters.guilds.utils.SkullUtils;
-import org.bukkit.Bukkit;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Base64;
+import java.util.Objects;
 
 /**
- * Created by GlareMasters
- * Date: 2/15/2019
- * Time: 1:34 PM
+ * Represents a guild skull, which is a player head in Minecraft that has a custom texture.
  */
-
 public class GuildSkull {
     private final String serialized;
     private transient ItemStack itemStack;
 
     /**
-     * Get the Guild Skull of a player
-     * @param player the player you're getting the skull of
+     * Creates a guild skull from a player.
+     *
+     * @param player the player whose head will be used for the guild skull
      */
     public GuildSkull(Player player) {
-        serialized = SkullUtils.getEncoded(getTextureUrl(player));
-        itemStack = SkullUtils.getSkull(serialized);
+        final Profileable playerProfile = Profileable.of(player);
+
+        itemStack = XSkull.createItem().profile(playerProfile).apply();
+        serialized = XSkull.of(itemStack.getItemMeta()).getProfileString();
     }
 
     /**
-     * Get the Guild Skull from a sting
-     * @param texture the texture you want to use
+     * Creates a guild skull from a texture string.
+     *
+     * @param texture the texture string, which should be a Minecraft resource location string
      */
     public GuildSkull(String texture) {
-        serialized = SkullUtils.getEncoded("https://textures.minecraft.net/texture/" + texture);
-        itemStack = SkullUtils.getSkull(serialized);
+        final ProfileInputType type = ProfileInputType.typeOf(texture);
+
+        if (type == null) {
+            this.serialized = Base64.getEncoder().encodeToString(Objects.requireNonNull(texture).getBytes());
+        } else {
+            this.serialized = texture;
+        }
+
+        this.itemStack = createSkull();
     }
 
     /**
-     * Get the texture of a player's skin
-     * @param player the player to get the skin from
-     * @return skin texture url
+     * Creates a guild skull from a serialized string.
+     *
+     * @return the guild skull
      */
-    private String getTextureUrl(Player player) {
-        GameProfile profile = getProfile(player);
-        if (profile == null) {
-            return "";
+    public ItemStack createSkull() {
+        final ProfileInputType type = ProfileInputType.typeOf(serialized);
+
+        if (type == null) {
+            final ProfileInputType backupType = ProfileInputType.typeOf("c10591e6909e6a281b371836e462d67a2c78fa0952e910f32b41a26c48c1757c");
+            final Profileable backupProfile = Profileable.of(backupType, serialized);
+
+            return XSkull.createItem().profile(backupProfile).apply();
         }
-        PropertyMap propertyMap = profile.getProperties();
-        for (Property property : propertyMap.get("textures")) {
-            byte[] decoded = Base64.getDecoder().decode(property.value());
-            JsonObject texture = new JsonParser().parse(new String(decoded)).getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject();
-            return texture.get("url").getAsString();
-        }
-        return "";
+
+        final Profileable playerProfile = Profileable.of(type, serialized);
+
+        return XSkull.createItem().profile(playerProfile).apply();
     }
 
     /**
-     * Try and get the profile of an online player
-     * @param player the player to get the profile from
-     * @return player profile
-     */
-    private GameProfile getProfile(Player player) {
-        try {
-            Class<?> strClass = Class.forName("org.bukkit.craftbukkit." + getServerVersion() + ".entity.CraftPlayer");
-            return (GameProfile) strClass.cast(player).getClass().getMethod("getProfile").invoke(strClass.cast(player));
-        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Attempt to get the server version
-     * @return server version
-     */
-    private String getServerVersion() {
-        try {
-            return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            return "unknown";
-        }
-    }
-
-    /**
-     * Get the skull as an item stack
-     * @return item stack
+     * Gets the guild skull as an item stack.
+     *
+     * @return the guild skull as an item stack
      */
     public ItemStack getItemStack() {
         return itemStack;
@@ -120,6 +99,7 @@ public class GuildSkull {
 
     /**
      * Get the serialized string
+     *
      * @return serialized string
      */
     public String getSerialized() {

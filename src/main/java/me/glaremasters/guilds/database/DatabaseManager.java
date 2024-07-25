@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,14 +30,23 @@ import me.glaremasters.guilds.configuration.sections.StorageSettings;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
+/**
+ * A class for managing the database connection using JDBI and HikariDataSource.
+ */
 public class DatabaseManager {
-    private Jdbi jdbi = null;
-    private HikariDataSource hikari = null;
+    private Jdbi jdbi;
+    private HikariDataSource hikari;
     private String dataSourceName;
 
+    /**
+     * Constructs a DatabaseManager object and sets up a database connection using the given settings manager and backend.
+     *
+     * @param settingsManager the settings manager that provides the database connection information
+     * @param backend         the type of database backend to use
+     */
     public DatabaseManager(SettingsManager settingsManager, DatabaseBackend backend) {
+        // Create a new HikariConfig object
         HikariConfig config = new HikariConfig();
-
         config.setMaximumPoolSize(settingsManager.getProperty(StorageSettings.SQL_POOL_SIZE));
         config.setMinimumIdle(settingsManager.getProperty(StorageSettings.SQL_POOL_IDLE));
         config.setMaxLifetime(settingsManager.getProperty(StorageSettings.SQL_POOL_LIFETIME));
@@ -60,6 +69,10 @@ public class DatabaseManager {
                 config.addDataSourceProperty("user", settingsManager.getProperty(StorageSettings.SQL_USERNAME));
                 config.addDataSourceProperty("password", settingsManager.getProperty(StorageSettings.SQL_PASSWORD));
                 config.addDataSourceProperty("useSSL", settingsManager.getProperty(StorageSettings.SQL_ENABLE_SSL));
+
+                if (settingsManager.getProperty(StorageSettings.UTF8)) {
+                    config.addDataSourceProperty("characterEncoding", "utf8");
+                }
                 break;
             case SQLITE:
                 config.setPoolName("Guilds SQLite Connection Pool");
@@ -73,6 +86,10 @@ public class DatabaseManager {
                 config.addDataSourceProperty("databaseName", databaseName);
                 config.addDataSourceProperty("user", settingsManager.getProperty(StorageSettings.SQL_USERNAME));
                 config.addDataSourceProperty("password", settingsManager.getProperty(StorageSettings.SQL_PASSWORD));
+
+                if (settingsManager.getProperty(StorageSettings.UTF8)) {
+                    config.addDataSourceProperty("characterEncoding", "utf8");
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid backend for DatabaseManager setup: " + backend.getBackendName());
@@ -94,16 +111,19 @@ public class DatabaseManager {
 
     /**
      * Helper method to try a data source until the right one is found
+     *
      * @param className the class to try
      */
     public void tryDataSourceName(final String className) {
         try {
             dataSourceName(className);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     /**
      * Helper method to check if a class exists to use for mysql data sourcing
+     *
      * @param className the class to check
      */
     private void dataSourceName(final String className) {
@@ -115,6 +135,11 @@ public class DatabaseManager {
         this.dataSourceName = className;
     }
 
+    /**
+     * Returns the status of the connection to the MySQL database.
+     *
+     * @return true if connected, false otherwise
+     */
     public final boolean isConnected() {
         return hikari != null && hikari.isRunning();
     }

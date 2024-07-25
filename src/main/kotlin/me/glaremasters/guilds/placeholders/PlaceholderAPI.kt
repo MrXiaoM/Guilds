@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import com.bekvon.bukkit.residence.containers.Flags
 import me.clip.placeholderapi.PlaceholderAPI
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.exte.rounded
 import me.glaremasters.guilds.challenges.ChallengeHandler
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.guild.GuildTier
@@ -77,7 +78,7 @@ class PlaceholderAPI(
             }
 
             val guild = try {
-                api.guildHandler.guilds.sortedBy { it.guildScore.wins }.reversed()[updated - 1]
+                api.guildHandler.guilds.values.sortedBy { it.guildScore.wins }.reversed()[updated - 1]
             } catch (ex: IndexOutOfBoundsException) {
                 return ""
             }
@@ -94,7 +95,7 @@ class PlaceholderAPI(
             }
 
             val guild = try {
-                api.guildHandler.guilds.sortedBy { it.guildScore.wins }.reversed()[updated - 1]
+                api.guildHandler.guilds.values.sortedBy { it.guildScore.wins }.reversed()[updated - 1]
             } catch (ex: IndexOutOfBoundsException) {
                 return ""
             }
@@ -111,7 +112,7 @@ class PlaceholderAPI(
             }
 
             val guild = try {
-                api.guildHandler.guilds.sortedBy { it.guildScore.loses }.reversed()[updated - 1]
+                api.guildHandler.guilds.values.sortedBy { it.guildScore.loses }.reversed()[updated - 1]
             } catch (ex: IndexOutOfBoundsException) {
                 return ""
             }
@@ -128,7 +129,7 @@ class PlaceholderAPI(
             }
 
             val guild = try {
-                api.guildHandler.guilds.sortedBy { it.guildScore.loses }.reversed()[updated - 1]
+                api.guildHandler.guilds.values.sortedBy { it.guildScore.loses }.reversed()[updated - 1]
             } catch (ex: IndexOutOfBoundsException) {
                 return ""
             }
@@ -144,8 +145,10 @@ class PlaceholderAPI(
                 return ""
             }
 
+            val filterValid = api.guildHandler.guilds.values.filter { it.guildScore.wins > 0 && it.guildScore.loses > 0 }
+
             val guild = try {
-                api.guildHandler.guilds.sortedBy { (it.guildScore.wins / it.guildScore.loses) }.reversed()[updated - 1]
+                filterValid.sortedBy { (it.guildScore.wins.toDouble() / it.guildScore.loses.toDouble()) }.reversed()[updated - 1]
             } catch (ex: IndexOutOfBoundsException) {
                 return ""
             }
@@ -161,13 +164,15 @@ class PlaceholderAPI(
                 return ""
             }
 
+            val filterValid = api.guildHandler.guilds.values.filter { it.guildScore.wins > 0 && it.guildScore.loses > 0 }
+
             val guild = try {
-                api.guildHandler.guilds.sortedBy { (it.guildScore.wins / it.guildScore.loses) }.reversed()[updated - 1]
+                filterValid.sortedBy  { (it.guildScore.wins.toDouble() / it.guildScore.loses.toDouble()) }.reversed()[updated - 1]
             } catch (ex: IndexOutOfBoundsException) {
                 return ""
             }
 
-            return (guild.guildScore.wins / guild.guildScore.loses).toString()
+            return (guild.guildScore.wins.toDouble() / guild.guildScore.loses.toDouble()).rounded().toString()
         }
         if (arg.startsWith("tier_")) {
             val s = arg.removePrefix("tier_")

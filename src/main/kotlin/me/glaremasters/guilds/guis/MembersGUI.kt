@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@
 package me.glaremasters.guilds.guis
 
 import ch.jalu.configme.SettingsManager
-import dev.triumphteam.gui.guis.Gui
+import dev.triumphteam.gui.components.InteractionModifier
 import dev.triumphteam.gui.guis.GuiItem
+import dev.triumphteam.gui.guis.PaginatedGui
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.ExperimentalSettings
 import me.glaremasters.guilds.configuration.sections.GuildInfoMemberSettings
 import me.glaremasters.guilds.configuration.sections.GuildListSettings
-import me.glaremasters.guilds.exte.addBackground
+import me.glaremasters.guilds.exte.addBottom
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.guild.GuildMember
@@ -42,9 +44,9 @@ import java.util.*
 
 class MembersGUI(private val guilds: Guilds, private val settingsManager: SettingsManager, private val guildHandler: GuildHandler) {
 
-    fun get(guild: Guild, player: Player, title: String? = null, overrideAction: String? = null): Gui {
+    fun get(guild: Guild, player: Player, title: String? = null, overrideAction: String? = null): PaginatedGui {
         val name = title ?: settingsManager.getProperty(GuildInfoMemberSettings.GUI_NAME).replace("{name}", guild.name)
-        val gui = Gui(6, StringUtils.color(name))
+        val gui = PaginatedGui(6, 45, StringUtils.color(name))
 
         gui.setDefaultClickAction { event ->
             event.isCancelled = true
@@ -58,8 +60,26 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
         }
 
         addItems(gui, guild, player, overrideAction)
-        addBackground(gui)
+        addBottom(gui)
+        createButtons(gui)
         return gui
+    }
+
+    private fun createButtons(gui: PaginatedGui) {
+        val nav = settingsManager.getProperty(GuildInfoMemberSettings.MEMBER_NAV) ?: return
+
+        val next = GuiItem(GuiUtils.createItem(nav.next.material, nav.next.name, emptyList()))
+        next.setAction {
+            gui.next()
+        }
+
+        val back = GuiItem(GuiUtils.createItem(nav.previous.material, nav.previous.name, emptyList()))
+        back.setAction {
+            gui.previous()
+        }
+
+        gui.setItem(6, 9, next)
+        gui.setItem(6, 1, back)
     }
 
     /**
@@ -68,7 +88,7 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
      * @param pane the pane to be added to
      * @param guild the guild of the player
      */
-    private fun addItems(gui: Gui, guild: Guild, player: Player, overrideAction: String? = null) {
+    private fun addItems(gui: PaginatedGui, guild: Guild, player: Player, overrideAction: String? = null) {
         val members = guild.members
 
         when (settingsManager.getProperty(GuildInfoMemberSettings.SORT_ORDER).toUpperCase()) {
@@ -103,7 +123,12 @@ class MembersGUI(private val guilds: Guilds, private val settingsManager: Settin
                         .replace("{status}", status))
             }
 
-            val item = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_MATERIAL), settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_NAME).replace("{player}", name.toString()), updated))
+            val item = if (settingsManager.getProperty(ExperimentalSettings.MEMBER_HEAD_SKILLS)) {
+                GuiItem(GuiUtils.createSkullItem(member, settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_NAME).replace("{player}", name.toString()), updated))
+            } else {
+                GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_MATERIAL), settingsManager.getProperty(GuildInfoMemberSettings.MEMBERS_NAME).replace("{player}", name.toString()), updated))
+            }
+
             item.setAction { event ->
                 if (overrideAction != null) {
                     Bukkit.dispatchCommand(

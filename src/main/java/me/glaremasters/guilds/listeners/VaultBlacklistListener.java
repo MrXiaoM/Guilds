@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -65,7 +66,7 @@ public class VaultBlacklistListener implements Listener {
     }
 
     /**
-     * Helps determine if a player has a Guild vault open
+     * Helps determine if a player has a Guild vault open by removing the player from the list of opened vaults.
      *
      * @param event the close event
      */
@@ -82,15 +83,9 @@ public class VaultBlacklistListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) {
             return;
         }
-        Player player = (Player) event.getWhoClicked();
-        Guild guild = guildHandler.getGuild(player);
-        if (guild == null) {
-            return;
-        }
-        if (!guildHandler.getOpened().contains(player)) {
-            return;
-        }
-        if (event.getClickedInventory() != null) {
+        final Player player = (Player) event.getWhoClicked();
+        final Guild guild = guildHandler.getGuild(player);
+        if (guild == null || !guildHandler.getOpened().contains(player) || event.getClickedInventory() != null) {
             return;
         }
         player.closeInventory();
@@ -149,6 +144,12 @@ public class VaultBlacklistListener implements Listener {
         // check if they are in the list of open vaults
         if (!guildHandler.getOpened().contains(player))
             return;
+
+        // Prevent hot swapping
+        if (event.getClick() == ClickType.NUMBER_KEY) {
+            event.setCancelled(true);
+            return;
+        }
 
         if (event.getView().getTopInventory().getHolder() instanceof Serialization.Holder) {
             Serialization.Holder holder = (Serialization.Holder) event.getView().getTopInventory().getHolder();

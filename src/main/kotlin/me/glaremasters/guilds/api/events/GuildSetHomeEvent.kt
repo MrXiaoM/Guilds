@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,4 +28,13 @@ import me.glaremasters.guilds.guild.Guild
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
+/**
+ * Class representing an event that occurs when a guild's home location is set.
+ *
+ * @property player the player who performed the action
+ * @property guild the guild that was affected
+ * @property location the new home location of the guild
+ *
+ * @constructor Creates a new [GuildSetHomeEvent].
+ */
 class GuildSetHomeEvent(player: Player, guild: Guild, val location: Location) : GuildEvent(player, guild)

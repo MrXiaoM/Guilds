@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ internal class CommandAdminScore : BaseCommand() {
     @Description("{@@descriptions.admin-score-resetall}")
     @CommandPermission(Constants.ADMIN_PERM)
     fun resetAll(issuer: CommandIssuer) {
-        guildHandler.guilds.forEach { guild ->
+        guildHandler.guilds.values.forEach { guild ->
             guild.guildScore.reset()
         }
         currentCommandIssuer.sendInfo(Messages.ADMIN__SCORE_RESETALL)

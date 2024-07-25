@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -95,6 +95,7 @@ internal class CommandAccept : BaseCommand() {
 
         guild.sendMessage(currentCommandManager, Messages.ACCEPT__PLAYER_JOINED, "{player}", player.name)
         guild.addMember(player, guildHandler)
+        guildHandler.addToMemberCache(player.uniqueId, guild.id)
         guildHandler.addGuildPerms(permission, player)
         guildHandler.addRolePerm(permission, player)
 
@@ -116,7 +117,7 @@ internal class CommandAccept : BaseCommand() {
             }
         }
 
-        if (ClaimUtils.isEnable(settingsManager)) {
+        if (ClaimUtils.isEnabled(settingsManager)) {
             val wrapper = WorldGuardWrapper.getInstance()
             ClaimUtils.getGuildClaim(wrapper, player, guild).ifPresent { region -> ClaimUtils.addMember(region, player) }
         }

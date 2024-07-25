@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -82,7 +82,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
     }
 
     private fun createListItems(gui: PaginatedGui, player: Player, overrideAction: String? = null) {
-        val guilds = guildHandler.guilds
+        val guilds = guildHandler.guilds.values.toMutableList()
 
         when (settingsManager.getProperty(GuildListSettings.GUILD_LIST_SORT).toUpperCase()) {
             "TIER" -> guilds.sortWith(Comparator.comparingInt { g: Guild -> g.tier.level }.reversed())
@@ -109,7 +109,13 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
     private fun setListItem(guild: Guild, player: Player, overrideAction: String? = null) {
         val defaultUrl = settingsManager.getProperty(GuildListSettings.GUILD_LIST_HEAD_DEFAULT_URL)
         val useDefaultUrl = settingsManager.getProperty(GuildListSettings.USE_DEFAULT_TEXTURE)
-        val item = if (!useDefaultUrl) guild.skull else GuildSkull(defaultUrl).itemStack
+
+        val item = if (!useDefaultUrl && guild.guildSkull != null) {
+            guild.guildSkull?.createSkull() ?: GuildSkull(defaultUrl).itemStack
+        } else {
+            GuildSkull(defaultUrl).itemStack
+        }
+
         val meta = item.itemMeta
         var name = settingsManager.getProperty(GuildListSettings.GUILD_LIST_ITEM_NAME)
 
@@ -176,6 +182,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
                     .replace("{guild-prosperity}", guild.prosperity.toString())
                     .replace("{guild-frd}", guild.prosperity.toString())
                     .replace("{guild-member-count}", guild.size.toString())
+                    .replace("{guild-members-online}", guild.onlineMembers.size.toString())
                     .replace("{guild-challenge-wins}", guild.guildScore.wins.toString())
                     .replace("{guild-challenge-loses}", guild.guildScore.loses.toString())
                     .replace("{creation}", sdf.format(guild.creationDate))

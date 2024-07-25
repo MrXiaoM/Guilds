@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,4 +27,13 @@ import me.glaremasters.guilds.api.events.base.GuildEvent
 import me.glaremasters.guilds.guild.Guild
 import org.bukkit.entity.Player
 
+/**
+ * Class representing an event that occurs when a guild adds an ally.
+ *
+ * @property player the player who performed the action
+ * @property guild the guild that added the ally
+ * @property ally the guild that was added as an ally
+ *
+ * @constructor Creates a new [GuildAddAllyEvent].
+ */
 class GuildAddAllyEvent(player: Player, guild: Guild, val ally: Guild) : GuildEvent(player, guild)

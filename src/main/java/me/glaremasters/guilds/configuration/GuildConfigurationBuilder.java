@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,37 +26,27 @@ package me.glaremasters.guilds.configuration;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import me.glaremasters.guilds.conf.GuildBuffSettings;
-import me.glaremasters.guilds.configuration.sections.ClaimSettings;
-import me.glaremasters.guilds.configuration.sections.CodeSettings;
-import me.glaremasters.guilds.configuration.sections.CooldownSettings;
-import me.glaremasters.guilds.configuration.sections.CostSettings;
-import me.glaremasters.guilds.configuration.sections.GuildInfoMemberSettings;
-import me.glaremasters.guilds.configuration.sections.GuildInfoSettings;
-import me.glaremasters.guilds.configuration.sections.GuildListSettings;
-import me.glaremasters.guilds.configuration.sections.GuildSettings;
-import me.glaremasters.guilds.configuration.sections.GuildVaultSettings;
-import me.glaremasters.guilds.configuration.sections.HooksSettings;
-import me.glaremasters.guilds.configuration.sections.PluginSettings;
-import me.glaremasters.guilds.configuration.sections.RoleSettings;
-import me.glaremasters.guilds.configuration.sections.StorageSettings;
-import me.glaremasters.guilds.configuration.sections.TicketSettings;
-import me.glaremasters.guilds.configuration.sections.TierSettings;
-import me.glaremasters.guilds.configuration.sections.VaultPickerSettings;
-import me.glaremasters.guilds.configuration.sections.WarSettings;
+import me.glaremasters.guilds.configuration.sections.*;
 
 /**
- * Created by GlareMasters
- * Date: 1/17/2019
- * Time: 12:45 PM
+ * A builder class that provides static methods for building different types of guild configuration data.
  */
 public class GuildConfigurationBuilder {
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private GuildConfigurationBuilder() {
     }
 
+    /**
+     * Builds the main guild configuration data, including settings for various features.
+     *
+     * @return A ConfigurationData object containing the main guild configuration settings.
+     */
     public static ConfigurationData buildConfigurationData() {
         return ConfigurationDataBuilder.createConfiguration(
-                PluginSettings.class, StorageSettings.class, HooksSettings.class, GuildListSettings.class,
+                PluginSettings.class, ExperimentalSettings.class, StorageSettings.class, HooksSettings.class, GuildListSettings.class,
                 VaultPickerSettings.class, GuildVaultSettings.class, GuildInfoSettings.class,
                 GuildInfoMemberSettings.class, GuildSettings.class,
                 WarSettings.class, CooldownSettings.class, CostSettings.class,
@@ -64,17 +54,30 @@ public class GuildConfigurationBuilder {
         );
     }
 
+    /**
+     * Builds the guild configuration data for tiers.
+     *
+     * @return A ConfigurationData object containing the guild tier configuration settings.
+     */
     public static ConfigurationData buildTierData() {
         return ConfigurationDataBuilder.createConfiguration(TierSettings.class);
     }
 
+    /**
+     * Builds the guild configuration data for roles.
+     *
+     * @return A ConfigurationData object containing the guild role configuration settings.
+     */
     public static ConfigurationData buildRoleData() {
         return ConfigurationDataBuilder.createConfiguration(RoleSettings.class);
     }
 
+    /**
+     * Builds the guild configuration data for buffs.
+     *
+     * @return A ConfigurationData object containing the guild buff configuration settings.
+     */
     public static ConfigurationData buildBuffData() {
         return ConfigurationDataBuilder.createConfiguration(GuildBuffSettings.class);
     }
-
-
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,9 +58,9 @@ internal class CommandInvite : BaseCommand() {
     @Subcommand("invite")
     @Description("{@@descriptions.invite}")
     @CommandPermission(Constants.BASE_PERM + "invite")
-    @CommandCompletion("@online")
+    @CommandCompletion("@players")
     @Syntax("%name")
-    fun invite(player: Player, @Conditions("perm:perm=INVITE") guild: Guild, @Values("@online") @Single target: String) {
+    fun invite(player: Player, @Conditions("perm:perm=INVITE") guild: Guild, @Values("@players") @Single target: String) {
         if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val user = Bukkit.getPlayer(target)
 

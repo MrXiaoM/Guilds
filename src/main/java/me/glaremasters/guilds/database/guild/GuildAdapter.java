@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class GuildAdapter {
@@ -80,7 +81,7 @@ public class GuildAdapter {
         return provider.getGuild(sqlTablePrefix, id);
     }
 
-    public void saveGuilds(@NotNull List<Guild> guilds) throws IOException {
+    public void saveGuilds(@NotNull Collection<Guild> guilds) throws IOException {
         if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         for (Guild guild : guilds) {
             saveGuild(guild);

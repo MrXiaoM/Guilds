@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,16 @@
 package me.glaremasters.guilds.actions
 
 /**
- * Created by GlareMasters on 6/28/2018.
+ * Interface for representing a confirmable action.
  */
 interface ConfirmAction {
-
+    /**
+     * Accept the action.
+     */
     fun accept()
 
+    /**
+     * Decline the action.
+     */
     fun decline()
 }

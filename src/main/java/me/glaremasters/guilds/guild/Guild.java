@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,10 @@
 package me.glaremasters.guilds.guild;
 
 import ch.jalu.configme.SettingsManager;
-import co.aikar.commands.ACFUtil;
 import co.aikar.commands.CommandManager;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.configuration.sections.GuildListSettings;
-import me.glaremasters.guilds.exceptions.ExpectationNotMet;
 import me.glaremasters.guilds.messages.Messages;
-import me.glaremasters.guilds.utils.SkullUtils;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -216,7 +213,7 @@ public class Guild {
      * @return itemstack of skull
      */
     public ItemStack getSkull() {
-        return SkullUtils.getSkull(guildSkull.getSerialized());
+        return guildSkull.createSkull();
     }
 
 
@@ -614,7 +611,7 @@ public class Guild {
 
     public void updateGuildSkull(Player player, SettingsManager settingsManager) {
         Guilds.newChain().async(() -> {
-            try{
+            try {
                 guildSkull = new GuildSkull(player);
             } catch (Exception ex) {
                 guildSkull = new GuildSkull(settingsManager.getProperty(GuildListSettings.GUILD_LIST_HEAD_DEFAULT_URL));

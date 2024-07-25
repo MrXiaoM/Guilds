@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,7 +60,7 @@ internal class CommandClaim : BaseCommand() {
     @Syntax("")
     fun claim(player: Player, @Conditions("perm:perm=CLAIM_LAND") guild: Guild) {
         if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
-        if (!ClaimUtils.isEnable(settingsManager)) {
+        if (!ClaimUtils.isEnabled(settingsManager)) {
             throw ExpectationNotMet(Messages.CLAIM__HOOK_DISABLED)
         }
 
@@ -102,7 +102,7 @@ internal class CommandClaim : BaseCommand() {
     @Syntax("")
     fun unclaim(player: Player, @Conditions("perm:perm=UNCLAIM_LAND") guild: Guild) {
         if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
-        if (!ClaimUtils.isEnable(settingsManager)) {
+        if (!ClaimUtils.isEnabled(settingsManager)) {
             throw ExpectationNotMet(Messages.CLAIM__HOOK_DISABLED)
         }
 

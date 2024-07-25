@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -113,12 +113,13 @@ internal class CommandLeave : BaseCommand() {
                     guildHandler.removeRolePerm(permission, player)
                     cooldownHandler.addCooldown(player, cooldownName, cooldownTime, TimeUnit.SECONDS)
 
-                    if (ClaimUtils.isEnable(settingsManager)) {
+                    if (ClaimUtils.isEnabled(settingsManager)) {
                         val wrapper = WorldGuardWrapper.getInstance()
                         ClaimUtils.getGuildClaim(wrapper, player, guild).ifPresent { region -> ClaimUtils.removeMember(region, player) }
                     }
 
                     guild.removeMember(player)
+                    guildHandler.removeFromMemberCache(player.uniqueId)
                     currentCommandIssuer.sendInfo(Messages.LEAVE__SUCCESSFUL)
                     guild.memberLeaveOrKickClean(player.name)
                     guild.sendMessage(currentCommandManager, Messages.LEAVE__PLAYER_LEFT, "{player}", name)

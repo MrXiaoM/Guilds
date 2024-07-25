@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,13 @@
 package me.glaremasters.guilds.utils;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
+import me.glaremasters.guilds.guild.GuildMember;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,9 +59,33 @@ public class GuiUtils {
         ItemBuilder builder = new ItemBuilder(item);
         builder.setName(StringUtils.color(name));
         if (!lore.isEmpty()) {
-            builder.setLore(lore.stream().map(StringUtils ::color).collect(Collectors.toList()));
+            builder.setLore(lore.stream().map(StringUtils::color).collect(Collectors.toList()));
         }
         builder.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         return builder.build();
+    }
+
+    /**
+     * Create a skull item
+     *
+     * @param member the member to get the skull from
+     * @param name   the name of the item
+     * @param lore   the lore of the item
+     * @return the skull item
+     */
+    public static ItemStack createSkullItem(final GuildMember member, final String name, final List<String> lore) {
+        final Profileable playerProfile = Profileable.of(member.getUuid());
+        final ItemStack itemStack = XSkull.createItem().profile(playerProfile).apply();
+        final ItemMeta meta = itemStack.getItemMeta();
+
+        meta.setDisplayName(StringUtils.color(name));
+        if (!lore.isEmpty()) {
+            meta.setLore(lore.stream().map(StringUtils::color).collect(Collectors.toList()));
+        }
+
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        itemStack.setItemMeta(meta);
+
+        return itemStack;
     }
 }

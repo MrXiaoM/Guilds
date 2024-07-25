@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2022 Glare
+ * Copyright (c) 2023 Glare
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -100,6 +100,7 @@ internal class CommandKick : BaseCommand() {
         cooldownHandler.addCooldown(user, Cooldown.Type.Join.name, settingsManager.getProperty(CooldownSettings.JOIN), TimeUnit.SECONDS)
         ClaimUtils.kickMember(user, player, guild, settingsManager)
         guild.removeMember(asMember)
+        guildHandler.removeFromMemberCache(user.uniqueId)
         currentCommandIssuer.sendInfo(Messages.BOOT__SUCCESSFUL, "{player}", user.name)
         guild.sendMessage(currentCommandManager, Messages.BOOT__PLAYER_KICKED, "{player}", user.name, "{kicker}", player.name)
 

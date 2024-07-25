@@ -73,7 +73,7 @@ dependencies {
     compileOnly("net.milkbowl:vault:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.mojang:authlib:1.5.21")
-    compileOnly(files("Residence-5.1.5.2.jar")) // https://zrips.net/Residence/
+    compileOnly(files("libs/Residence-5.1.5.2.jar")) // https://zrips.net/Residence/
 
     slim("org.jetbrains.kotlin:kotlin-stdlib")
 }

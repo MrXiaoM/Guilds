@@ -32,7 +32,6 @@ apply {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven("https://maven.fastmirror.net/repositories/minecraft/")
     maven("https://repo.huaweicloud.com/repository/maven/")
@@ -74,7 +73,7 @@ dependencies {
     compileOnly("net.milkbowl:vault:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.mojang:authlib:1.5.21")
-    compileOnly("top.mrxiaom:Residence:5.1.5.2")
+    compileOnly(files("Residence-5.1.5.2.jar")) // https://zrips.net/Residence/
 
     slim("org.jetbrains.kotlin:kotlin-stdlib")
 }

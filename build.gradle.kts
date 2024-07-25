@@ -31,7 +31,10 @@ apply {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven("https://maven.fastmirror.net/repositories/minecraft/")
+    maven("https://repo.huaweicloud.com/repository/maven/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
         content {
             includeGroup("org.bukkit")
@@ -70,6 +73,7 @@ dependencies {
     compileOnly("net.milkbowl:vault:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.mojang:authlib:1.5.21")
+    compileOnly("top.mrxiaom:Residence:5.1.5.2")
 
     slim("org.jetbrains.kotlin:kotlin-stdlib")
 }
@@ -100,7 +104,7 @@ tasks {
         mitLicense()
 
         javaVersions {
-            target(8)
+            target(17)
         }
 
         github("guilds-plugin", "guilds") {

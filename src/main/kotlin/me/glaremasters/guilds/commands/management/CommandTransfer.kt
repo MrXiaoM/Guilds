@@ -37,6 +37,7 @@ import co.aikar.commands.annotation.Syntax
 import co.aikar.commands.annotation.Values
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildTransferEvent
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -62,6 +63,7 @@ internal class CommandTransfer : BaseCommand() {
     @CommandCompletion("@members")
     @Syntax("%player")
     fun transfer(player: Player, @Conditions("perm:perm=TRANSFER_GUILD") guild: Guild, @Values("@members") @Single target: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val user = Bukkit.getOfflinePlayer(target)
 
         if (guild.guildMaster.uuid == user.uniqueId) {

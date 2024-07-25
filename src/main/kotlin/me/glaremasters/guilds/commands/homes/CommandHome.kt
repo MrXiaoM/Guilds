@@ -37,6 +37,7 @@ import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildSetHomeEvent
 import me.glaremasters.guilds.configuration.sections.CooldownSettings
 import me.glaremasters.guilds.configuration.sections.CostSettings
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.cooldowns.Cooldown
 import me.glaremasters.guilds.cooldowns.CooldownHandler
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
@@ -67,6 +68,7 @@ internal class CommandHome : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "delhome")
     @Syntax("")
     fun delete(player: Player, @Conditions("perm:perm=CHANGE_HOME") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guild.delHome()
         currentCommandIssuer.sendInfo(Messages.SETHOME__DELETED)
     }
@@ -76,6 +78,7 @@ internal class CommandHome : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "home")
     @Syntax("")
     fun home(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val home = guild.home ?: throw ExpectationNotMet(Messages.HOME__NO_HOME_SET)
         val cooldown = Cooldown.Type.Home.name
         val id = player.uniqueId
@@ -110,6 +113,7 @@ internal class CommandHome : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "sethome")
     @Syntax("")
     fun set(player: Player, @Conditions("perm:perm=CHANGE_HOME") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val cooldown = Cooldown.Type.SetHome.name
         val id = player.uniqueId
 

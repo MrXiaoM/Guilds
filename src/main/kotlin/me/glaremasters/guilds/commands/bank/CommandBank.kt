@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.bank
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandPermission
@@ -34,6 +35,7 @@ import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildDepositMoneyEvent
 import me.glaremasters.guilds.api.events.GuildWithdrawMoneyEvent
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.exte.rounded
 import me.glaremasters.guilds.guild.Guild
@@ -55,12 +57,15 @@ internal class CommandBank : BaseCommand() {
 
     @Dependency
     lateinit var economy: Economy
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("bank balance")
     @Description("{@@descriptions.bank-balance}")
     @Syntax("")
     @CommandPermission(Constants.BANK_PERM + "balance")
     fun balance(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         currentCommandIssuer.sendInfo(Messages.BANK__BALANCE, "{amount}", EconomyUtils.format(guild.balance))
     }
 
@@ -69,10 +74,10 @@ internal class CommandBank : BaseCommand() {
     @CommandPermission(Constants.BANK_PERM + "deposit")
     @Syntax("%amount")
     fun deposit(player: Player, @Conditions("perm:perm=DEPOSIT_MONEY") guild: Guild, amount: Double) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (amount.isNaN()) {
             throw ExpectationNotMet(Messages.SYNTAX__AMOUNT)
         }
-
         val balance = guild.balance
         val rounded = amount.rounded()
         val total = rounded + balance
@@ -108,6 +113,7 @@ internal class CommandBank : BaseCommand() {
     @CommandPermission(Constants.BANK_PERM + "withdraw")
     @Syntax("%amount")
     fun withdraw(player: Player, @Conditions("perm:perm=WITHDRAW_MONEY") guild: Guild, amount: Double) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (amount.isNaN()) {
             throw ExpectationNotMet(Messages.SYNTAX__AMOUNT)
         }

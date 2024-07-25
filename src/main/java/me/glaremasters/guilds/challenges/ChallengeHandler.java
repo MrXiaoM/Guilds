@@ -86,7 +86,6 @@ public class ChallengeHandler {
 
     /**
      * Save the data of challenges
-     * @throws IOException
      */
     public void saveData() throws IOException {
         guilds.getDatabase().getChallengeAdapter().saveChallenges(challenges);
@@ -184,7 +183,6 @@ public class ChallengeHandler {
      * @param guild the guild defending
      * @param commandManager the command manager
      * @param challenger the guild challenging
-     * @param acceptTime
      */
     public void pingOnlineDefenders(@NotNull Guild guild, @NotNull PaperCommandManager commandManager, @NotNull String challenger, int acceptTime) {
         getOnlineDefenders(guild).forEach(m -> commandManager.getCommandIssuer(m).sendInfo(Messages.WAR__INCOMING_CHALLENGE, "{guild}", challenger, "{amount}", String.valueOf(acceptTime)));

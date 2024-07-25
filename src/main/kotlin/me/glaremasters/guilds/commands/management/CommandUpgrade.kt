@@ -66,15 +66,21 @@ internal class CommandUpgrade : BaseCommand() {
     @CommandPermission(Constants.BASE_PERM + "upgrade")
     @Syntax("")
     fun upgrade(player: Player, @Conditions("perm:perm=UPGRADE_GUILD") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (guildHandler.isMaxTier(guild)) {
             throw ExpectationNotMet(Messages.UPGRADE__TIER_MAX)
         }
 
         val tier = guildHandler.getGuildTier(guild.tier.level + 1)!!
         val cost = tier.cost
+        val prosperity = tier.prosperity
 
         if (guildHandler.memberCheck(guild)) {
             throw ExpectationNotMet(Messages.UPGRADE__NOT_ENOUGH_MEMBERS, "{amount}", guild.tier.membersToRankup.toString())
+        }
+
+        if (guild.prosperity < prosperity) {
+            throw ExpectationNotMet(Messages.UPGRADE__NOT_ENOUGH_PROSPERITY, "{needed}", (prosperity - guild.prosperity).toString())
         }
 
         if (!EconomyUtils.hasEnough(guild.balance, cost)) {

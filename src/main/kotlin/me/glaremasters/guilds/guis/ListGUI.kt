@@ -26,6 +26,7 @@ package me.glaremasters.guilds.guis
 import ch.jalu.configme.SettingsManager
 import dev.triumphteam.gui.guis.GuiItem
 import dev.triumphteam.gui.guis.PaginatedGui
+import me.clip.placeholderapi.PlaceholderAPI
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.configuration.sections.GuildInfoSettings
 import me.glaremasters.guilds.configuration.sections.GuildListSettings
@@ -36,43 +37,51 @@ import me.glaremasters.guilds.guild.GuildSkull
 import me.glaremasters.guilds.utils.EconomyUtils
 import me.glaremasters.guilds.utils.GuiUtils
 import me.glaremasters.guilds.utils.StringUtils
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.text.SimpleDateFormat
 
 class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsManager, private val guildHandler: GuildHandler) {
     private val items: MutableList<GuiItem>
 
-    fun get(player: Player): PaginatedGui {
-            val name = settingsManager.getProperty(GuildListSettings.GUILD_LIST_NAME)
+    fun get(player: Player, title: String? = null, overrideAction: String? = null): PaginatedGui {
+            val name = title ?: settingsManager.getProperty(GuildListSettings.GUILD_LIST_NAME)
             val gui = PaginatedGui(6, 45, StringUtils.color(name))
 
             gui.setDefaultClickAction { event ->
                 event.isCancelled = true
             }
 
-            createListItems(gui, player)
+            createListItems(gui, player, overrideAction)
             addBottom(gui)
-            createButtons(gui)
+            createButtons(player, gui)
 
             return gui
         }
 
-    private fun createButtons(gui: PaginatedGui) {
+    private fun createButtons(player: Player, gui: PaginatedGui) {
         val next = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_NEXT_PAGE_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_NEXT_PAGE_ITEM_NAME), emptyList()))
         next.setAction {
             gui.next()
         }
 
-        val back = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM_NAME), emptyList()))
-        back.setAction {
+        val prev = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_PREVIOUS_PAGE_ITEM_NAME), emptyList()))
+        prev.setAction {
             gui.previous()
         }
 
+        val back = GuiItem(GuiUtils.createItem(settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM), settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM_NAME), emptyList()))
+        back.setAction {
+            val commands = settingsManager.getProperty(GuildListSettings.GUILD_LIST_BACK_ITEM_COMMANDS);
+            executeAction(player, commands)
+        }
+
         gui.setItem(6, 9, next)
-        gui.setItem(6, 1, back)
+        gui.setItem(6, 1, prev)
+        gui.setItem(6, 5, back)
     }
 
-    private fun createListItems(gui: PaginatedGui, player: Player) {
+    private fun createListItems(gui: PaginatedGui, player: Player, overrideAction: String? = null) {
         val guilds = guildHandler.guilds.values.toMutableList()
 
         when (settingsManager.getProperty(GuildListSettings.GUILD_LIST_SORT).toUpperCase()) {
@@ -87,7 +96,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         }
 
         guilds.forEach { guild ->
-            setListItem(guild, player)
+            setListItem(guild, player, overrideAction)
         }
 
         items.forEach { item ->
@@ -97,7 +106,7 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         items.clear()
     }
 
-    private fun setListItem(guild: Guild, player: Player) {
+    private fun setListItem(guild: Guild, player: Player, overrideAction: String? = null) {
         val defaultUrl = settingsManager.getProperty(GuildListSettings.GUILD_LIST_HEAD_DEFAULT_URL)
         val useDefaultUrl = settingsManager.getProperty(GuildListSettings.USE_DEFAULT_TEXTURE)
 
@@ -115,7 +124,13 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
         name = name.replace("{guild}", guild.name)
 
         meta?.setDisplayName(name)
-        meta?.lore = updatedLore(guild, settingsManager.getProperty(GuildListSettings.GUILD_LIST_HEAD_LORE))
+        meta?.lore = updatedLore(guild,
+            settingsManager.getProperty(
+                if (guilds.guildHandler.getGuild(player) == null)
+                    GuildListSettings.GUILD_LIST_HEAD_LORE_NO_GUILD
+                else GuildListSettings.GUILD_LIST_HEAD_LORE
+            )
+        )
 
         item.itemMeta = meta
 
@@ -123,7 +138,18 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
 
         guiItem.setAction { event ->
             event.isCancelled = true
-            guilds.guiHandler.members.get(guild, player).open(event.whoClicked)
+            if (guilds.guildHandler.getGuild(player) == null) {
+                player.closeInventory()
+                Bukkit.dispatchCommand(player, "guild request ${guild.name}")
+            }
+            else {
+                if (overrideAction != null) {
+                    player.closeInventory();
+                    Bukkit.dispatchCommand(player, overrideAction.replace("%guild_name%", guild.name))
+                } else {
+                    guilds.guiHandler.members.get(guild, player).open(event.whoClicked)
+                }
+            }
         }
 
         items.add(guiItem)
@@ -153,12 +179,15 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
                     .replace("{guild-status}", status)
                     .replace("{guild-tier}", tier)
                     .replace("{guild-balance}", EconomyUtils.format(guild.balance))
+                    .replace("{guild-prosperity}", guild.prosperity.toString())
+                    .replace("{guild-frd}", guild.prosperity.toString())
                     .replace("{guild-member-count}", guild.size.toString())
                     .replace("{guild-members-online}", guild.onlineMembers.size.toString())
                     .replace("{guild-challenge-wins}", guild.guildScore.wins.toString())
                     .replace("{guild-challenge-loses}", guild.guildScore.loses.toString())
                     .replace("{creation}", sdf.format(guild.creationDate))
-                    .replace("{guild-tier-name}", tierName)))
+                    .replace("{guild-tier-name}", tierName)
+                    .replace("{guild-motd}", guild.motd ?: "")))
         }
 
         return updated
@@ -166,5 +195,20 @@ class ListGUI(private val guilds: Guilds, private val settingsManager: SettingsM
 
     init {
         items = ArrayList()
+    }
+}
+
+fun executeAction(player: Player, commands: List<String>) {
+    runCatching {
+        PlaceholderAPI.setPlaceholders(player, commands).map { StringUtils.color(it) }.forEach {
+            when {
+                it.startsWith("console:") -> Bukkit.dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    it.removePrefix("console:")
+                )
+                it.startsWith("message:") -> player.sendMessage(it.removePrefix("message:"))
+                it.startsWith("player:") -> Bukkit.dispatchCommand(player, it.removePrefix("player:"))
+            }
+        }
     }
 }

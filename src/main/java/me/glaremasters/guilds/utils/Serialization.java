@@ -29,7 +29,9 @@ import me.glaremasters.guilds.configuration.sections.GuildVaultSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +103,9 @@ public class Serialization {
             int size = json.getInt("size", 54);
             title = StringUtils.color(settingsManager.getProperty(GuildVaultSettings.VAULT_NAME));
 
-            Inventory inventory = Bukkit.createInventory(null, size, title);
+            Inventory inventory = Bukkit.createInventory(new Holder(), size, title);
+            Holder holder = ((Holder) inventory.getHolder());
+            if (holder != null) holder.inventory = inventory;
             Map<String, Object> items = json.getConfigurationSection("items").getValues(false);
             for (Map.Entry<String, Object> item : items.entrySet()) {
                 ItemStack itemstack = (ItemStack) item.getValue();
@@ -114,6 +118,16 @@ public class Serialization {
             return null;
         }
     }
-
+    public static class Holder implements InventoryHolder {
+        protected Inventory inventory;
+        public int number = -1;
+        private Holder() {
+        }
+        @NotNull
+        @Override
+        public Inventory getInventory() {
+            return inventory;
+        }
+    }
 
 }

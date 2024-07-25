@@ -43,6 +43,7 @@ import me.glaremasters.guilds.api.events.challenges.GuildWarDeclineEvent
 import me.glaremasters.guilds.api.events.challenges.GuildWarPlayerJoinEvent
 import me.glaremasters.guilds.arena.ArenaHandler
 import me.glaremasters.guilds.challenges.ChallengeHandler
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.configuration.sections.WarSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
@@ -76,6 +77,7 @@ internal class CommandWar : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.WAR_PERM + "accept")
     fun accept(player: Player, @Conditions("perm:perm=INITIATE_WAR") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val challenge = challengeHandler.getChallenge(guild) ?: throw ExpectationNotMet(Messages.WAR__NO_PENDING_CHALLENGE)
         val challenger = challenge.challenger
 
@@ -109,6 +111,7 @@ internal class CommandWar : BaseCommand() {
     @CommandPermission(Constants.WAR_PERM + "challenge")
     @CommandCompletion("@guilds")
     fun challenge(player: Player, @Conditions("perm:perm=INITIATE_WAR") guild: Guild, @Flags("other") targetGuild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (challengeHandler.getChallenge(guild) != null) {
             throw ExpectationNotMet(Messages.WAR__ALREADY_CHALLENGING)
         }
@@ -174,6 +177,7 @@ internal class CommandWar : BaseCommand() {
     @CommandPermission(Constants.WAR_PERM + "deny")
     @Syntax("")
     fun deny(player: Player, @Conditions("perm:perm=INITIATE_WAR") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val challenge = challengeHandler.getChallenge(guild) ?: throw ExpectationNotMet(Messages.WAR__NO_PENDING_CHALLENGE)
         val challenger = challenge.challenger
 
@@ -193,6 +197,7 @@ internal class CommandWar : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.WAR_PERM + "join")
     fun join(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val challenge = challengeHandler.getChallenge(guild) ?: throw ExpectationNotMet(Messages.WAR__NO_PENDING_CHALLENGE)
 
         if (!challenge.isJoinble) {

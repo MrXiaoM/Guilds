@@ -33,6 +33,7 @@ import me.glaremasters.guilds.actions.ActionHandler
 import me.glaremasters.guilds.actions.ConfirmAction
 import me.glaremasters.guilds.arena.ArenaHandler
 import me.glaremasters.guilds.challenges.ChallengeHandler
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.cooldowns.CooldownHandler
 import me.glaremasters.guilds.database.DatabaseBackend
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
@@ -57,6 +58,7 @@ internal class CommandConsole : BaseCommand() {
     @Description("{@@descriptions.console-backup}")
     @CommandPermission(Constants.ADMIN_PERM)
     fun backup(issuer: CommandIssuer) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (issuer.isPlayer) {
             throw ExpectationNotMet(Messages.ERROR__CONSOLE_COMMAND)
         }
@@ -88,6 +90,7 @@ internal class CommandConsole : BaseCommand() {
     @Syntax("%new-backend")
     @CommandCompletion("@sources")
     fun migrate(issuer: CommandIssuer, @Values("@sources") toBackend: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (issuer.isPlayer) {
             throw ExpectationNotMet(Messages.ERROR__CONSOLE_COMMAND)
         }
@@ -139,6 +142,7 @@ internal class CommandConsole : BaseCommand() {
     @Description("{@@descriptions.console-unclaim-all}")
     @CommandPermission(Constants.ADMIN_PERM)
     fun unclaim(issuer: CommandIssuer) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (issuer.isPlayer) {
             throw ExpectationNotMet(Messages.ERROR__CONSOLE_COMMAND)
         }

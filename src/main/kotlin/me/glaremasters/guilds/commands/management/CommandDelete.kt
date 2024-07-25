@@ -65,9 +65,11 @@ internal class CommandDelete : BaseCommand() {
     @Syntax("")
     @Conditions("NotMigrating")
     fun delete(player: Player, @Conditions("perm:perm=REMOVE_GUILD") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         currentCommandIssuer.sendInfo(Messages.DELETE__WARNING)
         actionHandler.addAction(player, object : ConfirmAction {
             override fun accept() {
+                if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
                 val event = GuildRemoveEvent(player, guild, GuildRemoveEvent.Cause.PLAYER_DELETED)
                 Bukkit.getPluginManager().callEvent(event)
 
@@ -91,6 +93,7 @@ internal class CommandDelete : BaseCommand() {
             }
 
             override fun decline() {
+                if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
                 currentCommandIssuer.sendInfo(Messages.DELETE__CANCELLED)
                 actionHandler.removeAction(player)
             }

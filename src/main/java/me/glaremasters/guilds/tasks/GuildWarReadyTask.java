@@ -116,6 +116,16 @@ public class GuildWarReadyTask extends BukkitRunnable {
             challengeHandler.sendToArena(challenge.getAliveDefenders(), challenge.getArena().getDefenderLoc());
             challenge.setStarted(true);
             challenge.getDefender().setLastDefended(System.currentTimeMillis());
+            for (Player p : challenge.getChallenger().getOnlineAsPlayers()) {
+                if (guilds.getGuildHandler().getOpened().contains(p)) {
+                    p.closeInventory();
+                }
+            }
+            for (Player p : challenge.getDefender().getOnlineAsPlayers()) {
+                if (guilds.getGuildHandler().getOpened().contains(p)) {
+                    p.closeInventory();
+                }
+            }
             Bukkit.getPluginManager().callEvent(new GuildWarStartEvent(challenge.getChallenger(), challenge.getDefender()));
             cancel();
         }

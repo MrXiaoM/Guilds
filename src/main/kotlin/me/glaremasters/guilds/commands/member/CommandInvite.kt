@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.member
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
@@ -36,6 +37,7 @@ import co.aikar.commands.annotation.Syntax
 import co.aikar.commands.annotation.Values
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildInviteEvent
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -50,6 +52,8 @@ internal class CommandInvite : BaseCommand() {
     lateinit var guilds: Guilds
     @Dependency
     lateinit var guildHandler: GuildHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("invite")
     @Description("{@@descriptions.invite}")
@@ -57,6 +61,7 @@ internal class CommandInvite : BaseCommand() {
     @CommandCompletion("@players")
     @Syntax("%name")
     fun invite(player: Player, @Conditions("perm:perm=INVITE") guild: Guild, @Values("@players") @Single target: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val user = Bukkit.getPlayer(target)
 
         if (user == null || !user.isOnline) {

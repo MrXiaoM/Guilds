@@ -27,6 +27,7 @@ import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -75,6 +76,18 @@ public class GuildListSettings implements SettingsHolder {
     public static final Property<String> GUILD_LIST_NEXT_PAGE_ITEM_NAME =
             newProperty(LIST_PATH + "next-page-item-name", "&fNext Page");
 
+    @Comment("What item should players click to go back?")
+    public static final Property<String> GUILD_LIST_BACK_ITEM =
+            newProperty(LIST_PATH + "back-item", "RED_STAINED_GLASS_PANE");
+
+    @Comment("What should the name of this item be?")
+    public static final Property<String> GUILD_LIST_BACK_ITEM_NAME =
+            newProperty(LIST_PATH + "back-item-name", "&fBack");
+
+    @Comment("What commands should execute if player click the back button?")
+    public static final Property<List<String>> GUILD_LIST_BACK_ITEM_COMMANDS =
+            newListProperty(LIST_PATH + "back-item-commands", "console:dm open cd_guild %player_name%");
+
     @Comment("What item should players click to go to the previous page?")
     public static final Property<String> GUILD_LIST_PREVIOUS_PAGE_ITEM =
             newProperty(LIST_PATH + "previous-page-item", "EMPTY_MAP");
@@ -99,6 +112,10 @@ public class GuildListSettings implements SettingsHolder {
             "In version 3.5.3.3, {creation} was added to display the creation date of the guild"})
     public static final Property<List<String>> GUILD_LIST_HEAD_LORE =
             newListProperty(LIST_PATH + "head-lore", "&cName&8: &a{guild-name}", "&cPrefix&8: &a{guild-prefix}", "&cMaster&8: &a{guild-master}", "&cStatus&8: &a{guild-status}", "&cTier&8: &a{guild-tier}", "&cBalance&8: &a{guild-balance}", "&cMember Count&8: &a{guild-member-count}", "&cCreation Date&8: &a{creation}");
+
+    @Comment({""})
+    public static final Property<List<String>> GUILD_LIST_HEAD_LORE_NO_GUILD =
+            newListProperty(LIST_PATH + "head-lore-no-guild", "&cName&8: &a{guild-name}", "&cPrefix&8: &a{guild-prefix}", "&cMaster&8: &a{guild-master}", "&cStatus&8: &a{guild-status}", "&cTier&8: &a{guild-tier}", "&cBalance&8: &a{guild-balance}", "&cMember Count&8: &a{guild-member-count}", "&cCreation Date&8: &a{creation}", "&aClick to request to join the guild");
 
 
     private GuildListSettings() {

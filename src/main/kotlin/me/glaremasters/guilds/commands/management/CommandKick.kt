@@ -38,6 +38,7 @@ import co.aikar.commands.annotation.Values
 import java.util.concurrent.TimeUnit
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildKickEvent
+import me.glaremasters.guilds.commands.member.memberLeaveOrKickClean
 import me.glaremasters.guilds.configuration.sections.CooldownSettings
 import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.cooldowns.Cooldown
@@ -73,8 +74,11 @@ internal class CommandKick : BaseCommand() {
     @CommandCompletion("@members")
     @Syntax("%name")
     fun kick(player: Player, @Conditions("perm:perm=KICK") guild: Guild, @Values("@members") @Single name: String) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val user = Bukkit.getOfflinePlayer(name)
-        val asMember = guild.getMember(user.uniqueId) ?: throw ExpectationNotMet(Messages.ERROR__PLAYER_NOT_IN_GUILD, "{player}", name)
+        val asMember = guild.getMember(user.uniqueId) ?: guild.members.firstOrNull {
+            name.equals(it.name, true)
+        } ?: throw ExpectationNotMet(Messages.ERROR__PLAYER_NOT_IN_GUILD, "{player}", name)
 
         if (guild.isMaster(user)) {
             throw InvalidPermissionException()
@@ -105,6 +109,7 @@ internal class CommandKick : BaseCommand() {
         }
 
         guildHandler.removeFromChat(user.uniqueId)
+        user.name?.also { guild.memberLeaveOrKickClean(it) }
 
         currentCommandManager.getCommandIssuer(user).sendInfo(Messages.BOOT__KICKED, "{kicker}", player.name)
     }

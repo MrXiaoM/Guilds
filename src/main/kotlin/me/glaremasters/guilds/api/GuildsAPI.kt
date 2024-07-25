@@ -23,6 +23,9 @@
  */
 package me.glaremasters.guilds.api
 
+import ch.jalu.configme.SettingsManager
+import me.glaremasters.guilds.challenges.ChallengeHandler
+import me.glaremasters.guilds.configuration.SettingsHandler
 import java.util.UUID
 import me.glaremasters.guilds.cooldowns.CooldownHandler
 import me.glaremasters.guilds.guild.Guild

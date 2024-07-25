@@ -48,7 +48,7 @@ public class Guild {
         this.id = id;
     }
 
-    public Guild(UUID id, String name, String prefix, String motd, GuildMember guildMaster, GuildHome home, GuildSkull guildSkull, Status status, GuildTier tier, GuildScore guildScore, double balance, List<GuildMember> members, List<UUID> invitedMembers, List<UUID> allies, List<UUID> pendingAllies, List<GuildCode> codes, List<String> vaults, long lastDefended) {
+    public Guild(UUID id, String name, String prefix, String motd, GuildMember guildMaster, GuildHome home, GuildSkull guildSkull, Status status, GuildTier tier, GuildScore guildScore, double balance, int prosperity, String residence, List<String> residencePerm, List<GuildMember> members, List<UUID> invitedMembers, List<UUID> allies, List<UUID> pendingAllies, List<GuildCode> codes, List<String> vaults, long lastDefended) {
         this.id = id;
         this.name = name;
         this.prefix = prefix;
@@ -60,6 +60,9 @@ public class Guild {
         this.tier = tier;
         this.guildScore = guildScore;
         this.balance = balance;
+        this.prosperity = prosperity;
+        this.residence = residence;
+        this.residencePerm = residencePerm;
         this.members = members;
         this.invitedMembers = invitedMembers;
         this.allies = allies;
@@ -111,6 +114,17 @@ public class Guild {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+    public void setProsperity(int prosperity) {
+        this.prosperity = prosperity;
+    }
+
+    public void setResidence(String residence) {
+        this.residence = residence;
+    }
+
+    public void setResidencePerm(List<String> residencePerm) {
+        this.residencePerm = residencePerm;
     }
 
     public void setMembers(List<GuildMember> members) {
@@ -167,6 +181,10 @@ public class Guild {
     private GuildTier tier;
     private GuildScore guildScore;
     private double balance;
+    private int prosperity;
+
+    private String residence;
+    private List<String> residencePerm;
 
     private List<GuildMember> members;
 
@@ -214,7 +232,7 @@ public class Guild {
 
     /**
      * Invite a member by guild code
-     * @param guildMember
+     * @param guildMember the guildmember to add
      */
     public void addMemberByCode(GuildMember guildMember) {
         members.add(guildMember);
@@ -645,6 +663,18 @@ public class Guild {
         return this.balance;
     }
 
+    public int getProsperity() {
+        return this.prosperity;
+    }
+
+    public String getResidence() {
+        return residence;
+    }
+
+    public List<String> getResidencePerm() {
+        return residencePerm;
+    }
+
     public List<GuildMember> getMembers() {
         if (this.members == null) {
             this.members = new ArrayList<>();
@@ -698,6 +728,7 @@ public class Guild {
         return lastDefended;
     }
 
+
     public static class GuildBuilder {
         private UUID id;
         private String name;
@@ -710,6 +741,9 @@ public class Guild {
         private GuildTier tier;
         private GuildScore guildScore;
         private double balance;
+        private int prosperity;
+        private String residence;
+        private List<String> residencePerm;
         private List<GuildMember> members;
         private List<UUID> invitedMembers;
         private List<UUID> allies;
@@ -776,6 +810,21 @@ public class Guild {
             return this;
         }
 
+        public Guild.GuildBuilder prosperity(int prosperity) {
+            this.prosperity = prosperity;
+            return this;
+        }
+
+        public Guild.GuildBuilder residence(String residence) {
+            this.residence = residence;
+            return this;
+        }
+
+        public Guild.GuildBuilder residencePerm(List<String> residencePerm) {
+            this.residencePerm = residencePerm;
+            return this;
+        }
+
         public Guild.GuildBuilder members(List<GuildMember> members) {
             this.members = members;
             return this;
@@ -812,11 +861,11 @@ public class Guild {
         }
 
         public Guild build() {
-            return new Guild(id, name, prefix, motd, guildMaster, home, guildSkull, status, tier, guildScore, balance, members, invitedMembers, allies, pendingAllies, codes, vaults, lastDefended);
+            return new Guild(id, name, prefix, motd, guildMaster, home, guildSkull, status, tier, guildScore, balance, prosperity, residence, residencePerm, members, invitedMembers, allies, pendingAllies, codes, vaults, lastDefended);
         }
 
         public String toString() {
-            return "Guild.GuildBuilder(id=" + this.id + ", name=" + this.name + ", prefix=" + this.prefix + ", motd=" + this.motd + ", guildMaster=" + this.guildMaster + ", home=" + this.home + ", guildSkull=" + this.guildSkull + ", status=" + this.status + ", tier=" + this.tier + ", guildScore=" + this.guildScore + ", balance=" + this.balance + ", members=" + this.members + ", invitedMembers=" + this.invitedMembers + ", allies=" + this.allies + ", pendingAllies=" + this.pendingAllies + ", codes=" + this.codes + ", vaults=" + this.vaults + ", lastDefended=" + this.lastDefended + ")";
+            return "Guild.GuildBuilder(id=" + this.id + ", name=" + this.name + ", prefix=" + this.prefix + ", motd=" + this.motd + ", guildMaster=" + this.guildMaster + ", home=" + this.home + ", guildSkull=" + this.guildSkull + ", status=" + this.status + ", tier=" + this.tier + ", guildScore=" + this.guildScore + ", balance=" + this.balance + ", prosperity=" + this.prosperity + ", residence=" + this.residence + ", residencePerm=" + this.residencePerm + ", members=" + this.members + ", invitedMembers=" + this.invitedMembers + ", allies=" + this.allies + ", pendingAllies=" + this.pendingAllies + ", codes=" + this.codes + ", vaults=" + this.vaults + ", lastDefended=" + this.lastDefended + ")";
         }
     }
 }

@@ -76,6 +76,8 @@ public final class UpdateChecker {
      * @return a future update result
      */
     public CompletableFuture<UpdateResult> requestUpdateCheck() {
+        return CompletableFuture.completedFuture(new UpdateResult(UpdateReason.UP_TO_DATE));
+        /*
         return CompletableFuture.supplyAsync(() -> {
             int responseCode = -1;
             try {
@@ -109,6 +111,7 @@ public final class UpdateChecker {
 
             return new UpdateResult(responseCode == 401 ? UpdateReason.UNAUTHORIZED_QUERY : UpdateReason.UNKNOWN_ERROR);
         });
+         */
     }
 
     /**
@@ -325,7 +328,7 @@ public final class UpdateChecker {
      * @param settingsManager settings manager
      */
     public static void runCheck(Guilds guilds, SettingsManager settingsManager) {
-        if (settingsManager.getProperty(PluginSettings.UPDATE_CHECK)) {
+        /*if (settingsManager.getProperty(PluginSettings.UPDATE_CHECK)) {
             UpdateChecker.init(guilds, 66176).requestUpdateCheck().whenComplete((result, exception) -> {
                 if (result.requiresUpdate()) {
                     guilds.getLogger().info(String.format("An update is available! Guilds %s may be downloaded on SpigotMC", result.getNewestVersion()));
@@ -345,6 +348,7 @@ public final class UpdateChecker {
                 }
             });
         }
+         */
 
     }
 

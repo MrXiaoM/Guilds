@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.management
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandPermission
@@ -32,6 +33,7 @@ import co.aikar.commands.annotation.Description
 import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
 import me.glaremasters.guilds.messages.Messages
@@ -44,12 +46,15 @@ internal class CommandStatus : BaseCommand() {
     lateinit var guilds: Guilds
     @Dependency
     lateinit var guildHandler: GuildHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("status")
     @Description("{@@descriptions.status}")
     @CommandPermission(Constants.BASE_PERM + "status")
     @Syntax("")
     fun status(player: Player, @Conditions("perm:perm=TOGGLE_GUILD") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         guild.toggleStatus()
         currentCommandIssuer.sendInfo(Messages.STATUS__SUCCESSFUL, "{status}", guild.status.name)
     }

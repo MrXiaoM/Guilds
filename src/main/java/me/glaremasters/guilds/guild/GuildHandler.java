@@ -158,7 +158,8 @@ public class GuildHandler {
         final YamlConfiguration conf = YamlConfiguration.loadConfiguration(new File(guildsPlugin.getDataFolder(), "roles.yml"));
         final ConfigurationSection roleSec = conf.getConfigurationSection("roles");
 
-        for (String s : roleSec.getKeys(false)) {
+        this.roles.clear();
+        if (roleSec != null) for (String s : roleSec.getKeys(false)) {
             final String path = s + ".permissions.";
             final String name = roleSec.getString(s + ".name");
             final String perm = roleSec.getString(s + ".permission-node");
@@ -183,11 +184,20 @@ public class GuildHandler {
         final YamlConfiguration conf = YamlConfiguration.loadConfiguration(new File(guildsPlugin.getDataFolder(), "tiers.yml"));
         final ConfigurationSection tierSec = conf.getConfigurationSection("tiers.list");
 
-        for (String key : tierSec.getKeys(false)) {
+        this.tiers.clear();
+        if (tierSec != null) for (String key : tierSec.getKeys(false)) {
+            Map<Integer, Integer> roleMembersLimit = new HashMap<>();
+            ConfigurationSection roleSec = tierSec.getConfigurationSection(key + ".role-members-limit");
+            if (roleSec != null) for (String role : roleSec.getKeys(false)) try {
+                int roleId = Integer.parseInt(role);
+                int limit = roleSec.getInt(role);
+                roleMembersLimit.put(roleId, limit);
+            } catch (Throwable ignored) {}
             tiers.add(GuildTier.builder()
                     .level(tierSec.getInt(key + ".level"))
                     .name(tierSec.getString(key + ".name"))
                     .cost(tierSec.getDouble(key + ".cost", 1000))
+                    .prosperity(tierSec.getInt(key + ".prosperity", 0))
                     .maxMembers(tierSec.getInt(key + ".max-members", 10))
                     .vaultAmount(tierSec.getInt(key + ".vault-amount", 1))
                     .mobXpMultiplier(tierSec.getDouble(key + ".mob-xp-multiplier", 1.0))
@@ -197,6 +207,7 @@ public class GuildHandler {
                     .maxAllies(tierSec.getInt(key + ".max-allies", 10))
                     .useBuffs(tierSec.getBoolean(key + ".use-buffs", true))
                     .permissions(tierSec.getStringList(key + ".permissions"))
+                    .roleMembersLimit(roleMembersLimit)
                     .build());
         }
     }
@@ -562,7 +573,10 @@ public class GuildHandler {
      * @return The inventory of the specified guild vault.
      */
     public Inventory getGuildVault(Guild guild, int vault) {
-        return vaults.get(guild).get(vault - 1);
+        Inventory inv = vaults.get(guild).get(vault - 1);
+        Serialization.Holder holder = (Serialization.Holder) inv.getHolder();
+        if (holder != null) holder.number = vault;
+        return inv;
     }
 
     /**

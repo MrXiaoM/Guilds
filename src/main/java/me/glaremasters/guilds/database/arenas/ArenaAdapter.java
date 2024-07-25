@@ -23,8 +23,11 @@
  */
 package me.glaremasters.guilds.database.arenas;
 
+import ch.jalu.configme.SettingsManager;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.arena.Arena;
+import me.glaremasters.guilds.configuration.SettingsHandler;
+import me.glaremasters.guilds.configuration.sections.PluginSettings;
 import me.glaremasters.guilds.database.DatabaseAdapter;
 import me.glaremasters.guilds.database.DatabaseBackend;
 import me.glaremasters.guilds.database.arenas.provider.ArenaJsonProvider;
@@ -42,6 +45,7 @@ import java.util.List;
 public class ArenaAdapter {
     private final ArenaProvider provider;
     private String sqlTablePrefix;
+    private SettingsManager settingsManager;
 
     /**
      * Constructs a new {@link ArenaAdapter}
@@ -113,6 +117,7 @@ public class ArenaAdapter {
      * @throws IOException if an I/O error occurs
      */
     public void saveArenas(@NotNull Collection<Arena> arenas) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         List<String> savedIds = new ArrayList<>();
 
         for (Arena arena : arenas) {
@@ -138,6 +143,7 @@ public class ArenaAdapter {
      * @throws IOException if an I/O error occurs
      */
     public void saveArena(@NotNull Arena arena) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         if (!arenaExists(arena.getId().toString())) {
             createArena(arena);
         } else {
@@ -152,6 +158,7 @@ public class ArenaAdapter {
      * @throws IOException if an I/O error occurs
      */
     public void createArena(@NotNull Arena arena) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.createArena(sqlTablePrefix, arena.getId().toString(), Guilds.getGson().toJson(arena, Arena.class));
     }
 
@@ -162,6 +169,7 @@ public class ArenaAdapter {
      * @throws IOException if an I/O error occurs
      */
     public void updateArena(@NotNull Arena arena) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.updateArena(sqlTablePrefix, arena.getId().toString(), Guilds.getGson().toJson(arena, Arena.class));
     }
 
@@ -172,6 +180,7 @@ public class ArenaAdapter {
      * @throws IOException if an I/O error occurs
      */
     public void deleteArena(@NotNull String id) throws IOException {
+        if (settingsManager.getProperty(PluginSettings.READ_ONLY)) return;
         provider.deleteArena(sqlTablePrefix, id);
     }
 }

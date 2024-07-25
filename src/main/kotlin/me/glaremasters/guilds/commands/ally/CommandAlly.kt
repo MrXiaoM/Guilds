@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.ally
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
@@ -36,6 +37,7 @@ import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
 import me.glaremasters.guilds.api.events.GuildAddAllyEvent
 import me.glaremasters.guilds.api.events.GuildRemoveAllyEvent
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -50,6 +52,8 @@ internal class CommandAlly : BaseCommand() {
 
     @Dependency
     lateinit var guildHandler: GuildHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("ally accept")
     @Description("{@@descriptions.ally-accept}")
@@ -57,6 +61,7 @@ internal class CommandAlly : BaseCommand() {
     @CommandCompletion("@allyInvites")
     @Syntax("%guild")
     fun accept(player: Player, @Conditions("perm:perm=ADD_ALLY|NotMaxedAllies") guild: Guild, @Flags("other") target: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!guild.isAllyPending(target)) {
             return
         }
@@ -74,6 +79,7 @@ internal class CommandAlly : BaseCommand() {
     @CommandCompletion("@guilds")
     @Syntax("%guild")
     fun add(player: Player, @Conditions("perm:perm=ADD_ALLY|NotMaxedAllies") guild: Guild, @Flags("other") target: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (target.isAllyPending(guild)) {
             throw ExpectationNotMet(Messages.ALLY__ALREADY_REQUESTED)
         }
@@ -104,6 +110,7 @@ internal class CommandAlly : BaseCommand() {
     @CommandCompletion("@allyInvites")
     @Syntax("%guild")
     fun decline(player: Player, @Conditions("perm:perm=REMOVE_ALLY") guild: Guild, @Flags("other") target: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!guild.isAllyPending(target)) {
             return
         }
@@ -120,6 +127,7 @@ internal class CommandAlly : BaseCommand() {
     @CommandCompletion("@allies")
     @Syntax("%guild")
     fun remove(player: Player, @Conditions("perm:perm=REMOVE_ALLY") guild: Guild, @Flags("other") target: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!guildHandler.isAlly(guild, target)) {
             throw ExpectationNotMet(Messages.ALLY__NOT_ALLIED)
         }
@@ -142,6 +150,7 @@ internal class CommandAlly : BaseCommand() {
     @Syntax("")
     @CommandPermission(Constants.ALLY_PERM + "list")
     fun list(player: Player, guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!guild.hasAllies()) {
             throw ExpectationNotMet(Messages.ALLY__NONE)
         }

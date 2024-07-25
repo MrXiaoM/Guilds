@@ -23,6 +23,7 @@
  */
 package me.glaremasters.guilds.commands.member
 
+import ch.jalu.configme.SettingsManager
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
@@ -34,6 +35,7 @@ import co.aikar.commands.annotation.Flags
 import co.aikar.commands.annotation.Subcommand
 import co.aikar.commands.annotation.Syntax
 import me.glaremasters.guilds.Guilds
+import me.glaremasters.guilds.configuration.sections.PluginSettings
 import me.glaremasters.guilds.exceptions.ExpectationNotMet
 import me.glaremasters.guilds.guild.Guild
 import me.glaremasters.guilds.guild.GuildHandler
@@ -47,6 +49,8 @@ internal class CommandDecline : BaseCommand() {
     lateinit var guilds: Guilds
     @Dependency
     lateinit var guildHandler: GuildHandler
+    @Dependency
+    lateinit var settingsManager: SettingsManager
 
     @Subcommand("decline")
     @Description("{@@descriptions.decline}")
@@ -54,6 +58,7 @@ internal class CommandDecline : BaseCommand() {
     @CommandCompletion("@invitedTo")
     @Syntax("%guild")
     fun decline(@Conditions("NoGuild") player: Player, @Flags("other") guild: Guild) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         if (!guild.checkIfInvited(player)) {
             throw ExpectationNotMet(Messages.ACCEPT__NOT_INVITED)
         }

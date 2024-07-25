@@ -36,7 +36,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
  * Time: 2:29 PM
  */
 public final class PluginSettings implements SettingsHolder {
-
+    public static final Property<Boolean> READ_ONLY = newProperty("settings.read-only", false);
     @Comment({"This is used for the Guild's Announcement System, which allow me (The Author) to communicate to you guys without updating.",
             "The way this works is very simple. If you have \"console\" set to \"true\", you will see the announcement when the server starts.",
             "If you have \"in-game\" set to \"true\", your OPed players will see it the first time they login to the server."
@@ -54,7 +54,7 @@ public final class PluginSettings implements SettingsHolder {
             "If I wanted to switch to french, I would use fr-FR as the language instead."
     })
     public static final Property<String> MESSAGES_LANGUAGE =
-            newProperty("settings.messagesLanguage", "en-US");
+            newProperty("settings.messagesLanguage", "zh-CN");
 
     @Comment("Would you like to check for plugin updates on startup? It's highly suggested you keep this enabled!")
     public static final Property<Boolean> UPDATE_CHECK =

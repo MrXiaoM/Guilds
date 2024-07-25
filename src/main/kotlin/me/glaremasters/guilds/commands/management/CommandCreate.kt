@@ -72,6 +72,7 @@ internal class CommandCreate : BaseCommand() {
     @Syntax("%name %optional %prefix")
     @Conditions("NotMigrating")
     fun create(@Conditions("NoGuild") player: Player, name: String, @Optional prefix: String?) {
+        if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
         val cooldown = Cooldown.Type.Join.name
         val id = player.uniqueId
 
@@ -112,6 +113,7 @@ internal class CommandCreate : BaseCommand() {
         currentCommandIssuer.sendInfo(Messages.CREATE__WARNING, "{amount}", EconomyUtils.format(cost))
         actionHandler.addAction(player, object : ConfirmAction {
             override fun accept() {
+                if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
                 if (!EconomyUtils.hasEnough(currentCommandManager, economy, player, cost)) {
                     throw ExpectationNotMet(Messages.ERROR__NOT_ENOUGH_MONEY)
                 }
@@ -136,13 +138,17 @@ internal class CommandCreate : BaseCommand() {
                 gb.members(members)
                 gb.home(null)
                 gb.balance(0.0)
+                gb.prosperity(0)
+                gb.residence("")
+                gb.residencePerm(arrayListOf("container"))
                 gb.tier(guildHandler.getGuildTier(1))
 
                 gb.invitedMembers(arrayListOf())
                 gb.allies(arrayListOf())
                 gb.pendingAllies(arrayListOf())
-
-                gb.vaults(arrayListOf())
+                gb.vaults(guildHandler.getGuildTier(1)?.vaultAmount?.run {
+                    return@run (0 until this).map { "{\"size\":54,\"items\":{}}" }
+                } ?: arrayListOf())
                 gb.codes(arrayListOf())
 
                 val guild = gb.build()
@@ -170,6 +176,7 @@ internal class CommandCreate : BaseCommand() {
             }
 
             override fun decline() {
+                if (guilds.settingsHandler.mainConf.getProperty(PluginSettings.READ_ONLY)) return
                 currentCommandIssuer.sendInfo(Messages.CREATE__CANCELLED)
                 actionHandler.removeAction(player)
             }
